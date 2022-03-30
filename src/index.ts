@@ -1,5 +1,3 @@
-/* eslint-disable import/extensions */
-/* eslint-disable import/no-unresolved */
 import express from 'express';
 import Path from 'path';
 import YAML from 'yamljs';
@@ -23,10 +21,6 @@ app.use(
   SwaggerUI.serve,
   SwaggerUI.setup(jsonDocsFile),
 );
-
-app.get('/test', async (request, response) => {
-  response.send('Hello here');
-});
 
 app.listen(port, () => {
   console.log(`Server is up on port ${port}`);
