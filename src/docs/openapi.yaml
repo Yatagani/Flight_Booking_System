@@ -58,86 +58,10 @@ components:
           type: "string"
         lastName:
           type: "string"
-    Register:
-      type: "object"
-      required:
-      - "email"
-      - "password"
-      - "firstName"
-      - "lastName"
-      - "redirectUrl"
-      properties:
-        email:
-          type: "string"
-          format: "email"
-        password:
-          type: "string"
-          format: "password"
-        firstName:
-          type: "string"
-        lastName:
-          type: "string"
-        redirectUrl:
-          type: "string"
-          format: "uri"
-    ResendConfirmation:
-      type: "object"
-      required:
-        - "email"
-        - "redirectUrl"
-      properties:
-        email:
-          type: "string"
-          format: "email"
-        redirecUrl:
-          type: "string"
-          format: "uri"
-    Login:
-      type: "object"
-      required:
-        - "email"
-        - "password"
-      properties:
-        email:
-          type: "string"
-          format: "email"
-        password:
-          type: "string"
-          format: "password"
-    RequestNewPassword:
-      type: "object"
-      required:
-        - "email"
-        - "redirectUrl"
-      properties:
-        email:
-          type: "string"
-          format: "email"
-        redirecUrl:
-          type: "string"
-          format: "uri"
-    Password:
-      type: "object"
-      required:
-        - "token"
-        - "password"
-      properties:
-        token:
-          type: "string"
-        password:
-          type: "string"
-    ActivateTwoFactor:
-      type: "object"
-      required:
-        - "token"
-      properties:
-        token:
-          description: "Token generated from a third party app (e.g. Google Authenticator)"
-          type: "string"
     Airplane:
       type: "object"
       properties:
-        id:
+        _id:
           type: "string"
         name:
           type: "string"
@@ -146,20 +70,24 @@ components:
           items: 
             type: "object"
             properties: 
-              id: 
+              _id: 
+                type: string
+              seatName: 
                 type: "string"
               price:
                 type: "integer"
     Airport:
       type: "object"
       properties:
-        id:
+        _id:
           type: "string"
         name:
           type: "string"
         address:
           type: "object"
           properties: 
+            _id:
+              type: "string"
             country: 
               type: "string"
             city:
@@ -171,7 +99,7 @@ components:
     Flight:
       type: "object"
       properties:
-        id:
+        _id:
           type: "string"
         departureTime:
           type: "string"
@@ -188,7 +116,7 @@ components:
     Booking:
       type: "object"
       properties:
-        id: 
+        _id: 
           type: "string"
         departureTime:
           type: "string"
@@ -204,7 +132,6 @@ components:
           type: "number"
         seat: 
           type: "string"
-  
   responses:
     400:
       description: Bad Request
@@ -270,21 +197,6 @@ components:
             code: ckgjkxvgl000431pp4xlpew2g
             name: Internal Server Error
             message: Operation cannot be completed due to a problem
-  
-  parameters:
-    skip:
-      name: skip
-      in: query
-      description: Number of records to skip (for pagination)
-      schema:
-        type: string
-    limit:
-      name: limit
-      in: query
-      description: Page size (for pagination)
-      schema:
-        type: string
-
   examples:
     UserNotFound:
       value:
@@ -319,7 +231,7 @@ paths:
   /auth/register:
     post:
       tags:
-      - "Authentication"
+        - "Authentication"
       summary: "Sign up"
       description: "Adds a new user account and sends a confirmation email"
       requestBody:
@@ -328,7 +240,26 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Register"
+              required:
+                - "email"
+                - "password"
+                - "firstName"
+                - "lastName"
+                - "redirectUrl"
+              properties:
+                email:
+                  type: "string"
+                  format: "email"
+                password:
+                  type: "string"
+                  format: "password"
+                firstName:
+                  type: "string"
+                lastName:
+                  type: "string"
+                redirectUrl:
+                  type: "string"
+                  format: "uri"
       responses:
         "204": 
           description: "User created successfully"
@@ -361,7 +292,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ResendConfirmation" 
+              type: "object"
+              required:
+                - "email"
+                - "redirectUrl"
+              properties:
+                email:
+                  type: "string"
+                  format: "email"
+                redirecUrl:
+                  type: "string"
+                  format: "uri"
       responses:
         "204": 
           description: "Email sent successfully"
@@ -384,7 +325,7 @@ paths:
   /auth/login:
     post:
       tags:
-      - "Authentication"
+        - "Authentication"
       summary: "Log in"
       description: "Authenticate with email and password"
       requestBody:
@@ -392,7 +333,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Login"
+              type: "object"
+              required:
+                - "email"
+                - "password"
+              properties:
+                email:
+                  type: "string"
+                  format: "email"
+                password:
+                  type: "string"
+                  format: "password"
       responses:
         "200": 
           description: "User authenticated successfully"
@@ -439,16 +390,16 @@ paths:
   /auth/confirmation:
     put:
       tags:
-      - "Authentication"
+        - "Authentication"
       summary: "Confirm account"
       description: "Sets user confirmation level to 'confirmed'"
       parameters:
-      - in: "query"
-        name: "token"
-        description: "User confiramation token"
-        required: true
-        schema:
-          type: "string"
+        - name: "token"
+          in: "query"
+          description: "User confiramation token"
+          required: true
+          schema:
+            type: "string"
       responses:
         "204": 
           description: "Account confirmed successfully"
@@ -473,7 +424,7 @@ paths:
   /auth/request-new-password:
     post:
       tags: 
-      - "Authentication"
+        - "Authentication"
       summary: "Request new password"
       description: "Sends an email with the reset password instructions"
       requestBody:
@@ -481,7 +432,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RequestNewPassword"
+              type: "object"
+              required:
+                - "email"
+                - "redirectUrl"
+              properties:
+                email:
+                  type: "string"
+                  format: "email"
+                redirecUrl:
+                  type: "string"
+                  format: "uri"
       responses:
         "204": 
           description: "Email sent successfully"
@@ -501,7 +462,7 @@ paths:
   /auth/password:
     put:
       tags: 
-      - "Authentication"
+        - "Authentication"
       summary: "Reset password"
       description: "Reset the user password"
       requestBody:
@@ -509,7 +470,15 @@ paths:
         content:
           application/json:  
             schema:
-              $ref: "#/components/schemas/Password"
+              type: "object"
+              required:
+                - "token"
+                - "password"
+              properties:
+                token:
+                  type: "string"
+                password:
+                  type: "string"
       responses:
         "204": 
           description: "Password updated successfully"
@@ -529,9 +498,9 @@ paths:
   /auth/two-factor-auth/initialization:
     put:
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       tags:
-      -  "Authentication"
+        -  "Authentication"
       summary: "Initialize two-factor authentication"
       description: "Generates a QR code and returns it to the client."
       responses:
@@ -560,16 +529,23 @@ paths:
   /auth/two-factor-auth/activation:
     put:
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       tags:
-      -  "Authentication"
+        -  "Authentication"
       summary: "Activate two-factor authentication"
       description: "Receives a token from the user and validates it. If the token is valid, the two-factor authentication becomes active."
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ActivateTwoFactor"
+              required:
+                - "token"
+              properties:
+                token:
+                  description: Token generated from a third party app (e.g. Google Authenticator)
+                  type: string
+
+              
       responses:
         "204": 
           description: "Two-factor-authentication activated successfully"
@@ -612,18 +588,18 @@ paths:
   /auth/two-factor-auth/verification:
     head:
       security:
-      - bearerAuth: []
+        - bearerAuth: []
       tags:
-      -  "Authentication"
+        -  "Authentication"
       summary: "verify two-factor authentication"
       description: "Receives a token from the user and validates it."
       parameters:
-      - in: "query"
-        name: "token"
-        description: "Token generated from a third party app (e.g. Google Authenticator)"
-        required: true
-        schema:
-          type: "string"
+        - in: "query"
+          name: "token"
+          description: "Token generated from a third party app (e.g. Google Authenticator)"
+          required: true
+          schema:
+            type: "string"
       responses:
         "204": 
           description: "Token is valid"
@@ -640,7 +616,7 @@ paths:
   /users:
     get:
       tags:
-      - "User"
+        - "User"
       summary: "Get all users"
       description: "Admin can get list of all users"
       parameters: []
@@ -648,38 +624,38 @@ paths:
         "200":
           description: "successful operation"
       security:
-      - bearerAuth: []
+        - bearerAuth: []
   /users/{id}:
     parameters:
-    - in: path
-      name: id
-      required: true
-      schema:
-        type: "string"
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: "string"
     get:
       tags:
-      - "User"
+        - "User"
       summary: "Get my profile"
       description: "Get my profile details"
       responses:
         "200":
           description: "successful operation"
       security:
-      - bearerAuth: []
+        - bearerAuth: []
     put:
       tags:
-      - "User"
+        - "User"
       summary: "Update my profile"
       description: "Update my profile details"
       responses:
         "200":
           description: "successful operation"
       security:
-      - bearerAuth: [] 
+        - bearerAuth: [] 
   /booking:
     post:
       tags:
-      - "Booking"
+        - "Booking"
       summary: "Book a flight"
       operationId: "bookFlight"
       requestBody:
@@ -709,7 +685,7 @@ paths:
         - bearerAuth: []
     get:
       tags:
-      - "Booking"
+        - "Booking"
       summary: "Get all flights"
       description: ""
       operationId: "getAllFlight"
@@ -731,20 +707,20 @@ paths:
           description: "Internal server error"
       security:
         - bearerAuth: []
-  /booking/{bookingId}:
+  /booking/{id}:
     delete:
       tags:
-      - "Booking"
+        - "Booking"
       summary: "Cancel booking"
       description: ""
       operationId: "cancelBooking"
       parameters:
-      - in: "path"
-        name: "bookingId"
-        description: "Booking is canceled"
-        required: true
-        schema:
-          type: "string"
+        - in: "path"
+          name: "id"
+          description: "Booking is canceled"
+          required: true
+          schema:
+            type: "string"
       responses:
         "200":
           description: "Booking cancled"
@@ -758,10 +734,10 @@ paths:
           description: "Booking not found"
       security:
         - bearerAuth: []
-  /airplane:
+  /airplanes:
     post:
       tags:
-      - "Airplane"
+        - "Airplane"
       summary: "Add a new Airplane"
       description: ""
       operationId: "addAirplane"
@@ -803,7 +779,7 @@ paths:
         - bearerAuth: []
     get:
       tags: 
-      - "Airplane"
+        - "Airplane"
       summary: "Get all airplanes"
       description: ""
       operationId: ""
@@ -828,20 +804,20 @@ paths:
           description: "Internal Server Error"
       security:
         - bearerAuth: []
-  /airplane/{id}:
+  /airplanes/{id}:
     get:
       tags:
-      - "Airplane"
+        - "Airplane"
       summary: "Get an airplane details"
       description: ""
       operationId: "findAirplanesByTags"
       parameters:
-      - name: "id"
-        in: "path"
-        description: "Airplane id"
-        schema:
-          type: "string"
-        required: true
+        - name: "id"
+          in: "path"
+          description: "Airplane id"
+          schema:
+            type: "string"
+          required: true
       responses:
         "200":
           description: ""
@@ -863,17 +839,17 @@ paths:
         - bearerAuth: []
     patch:
       tags:
-      - "Airplane"
+        - "Airplane"
       summary: "Update an existing airplanes"
       description: ""
       operationId: "updateAirplanes"
       parameters:
-      - in: "path"
-        name: "id"
-        description: "Airplane id"
-        schema:
-          type: "string"
-        required: true
+        - in: "path"
+          name: "id"
+          description: "Airplane id"
+          schema:
+            type: "string"
+          required: true
       requestBody:
         description: "Airplane object that needs to be updated"
         required: true
@@ -914,17 +890,17 @@ paths:
         - bearerAuth: []
     delete:
       tags:
-      - "Airplane"
+        - "Airplane"
       summary: "Deletes an airplane"
       description: ""
       operationId: "deleteAirplanes"
       parameters:
-      - in: "path"
-        name: "id"
-        description: "Airplane id to delete"
-        required: true
-        schema:
-          type: "string"
+        - in: "path"
+          name: "id"
+          description: "Airplane id to delete"
+          required: true
+          schema:
+            type: "string"
       responses:
         "204": 
           description: "Airplane successfully deleted"
@@ -940,10 +916,10 @@ paths:
           description: "Internal Server Error"
       security:
         - bearerAuth: []
-  /airport:
+  /airports:
     post:
       tags:
-      - "Airport"
+        - "Airport"
       summary: "Add a new airport"
       description: ""
       operationId: "addAirport"
@@ -987,7 +963,7 @@ paths:
         - bearerAuth: []
     get:
       tags: 
-      - "Airport"
+        - "Airport"
       summary: "Get all airports"
       description: ""
       responses:
@@ -1011,20 +987,20 @@ paths:
           description: "Internal Server Error"
       security:
         - bearerAuth: []
-  /airport/{id}:
+  /airports/{id}:
     get:
       tags:
-      - "Airport"
+        - "Airport"
       summary: "Get an airport details"
       description: ""
       operationId: "findAirportsByTags"
       parameters:
-      - name: "id"
-        in: "path"
-        description: "Airport id"
-        schema:
-          type: "string"
-        required: true
+        - name: "id"
+          in: "path"
+          description: "Airport id"
+          schema:
+            type: "string"
+          required: true
       responses:
         "200":
           description: "OK"
@@ -1046,17 +1022,17 @@ paths:
         - bearerAuth: []
     patch:
       tags:
-      - "Airport"
+        - "Airport"
       summary: "Update an existing airport"
       description: ""
       operationId: "updateAirport"
       parameters:
-      - name: "id"
-        in: "path"
-        description: "Airport id"
-        schema:
-          type: "string"
-        required: true
+        - name: "id"
+          in: "path"
+          description: "Airport id"
+          schema:
+            type: "string"
+          required: true
       requestBody:
         description: "Airport object that needs to be updated"
         required: true
@@ -1099,17 +1075,17 @@ paths:
         - bearerAuth: []
     delete:
       tags:
-      - "Airport"
+        - "Airport"
       summary: "Deletes an airport"
       description: ""
       operationId: "deleteAirport"
       parameters:
-      - in: "path"
-        name: "id"
-        description: "Airport id to delete"
-        required: true
-        schema:
-          type: "string"
+        - in: "path"
+          name: "id"
+          description: "Airport id to delete"
+          required: true
+          schema:
+            type: "string"
       responses:
         "204": 
           description: "Airport successfully deleted"
@@ -1123,10 +1099,10 @@ paths:
           description: "Airport not found"
       security:
         - bearerAuth: []
-  /flight:
+  /flights:
     post:
       tags:
-      - "Flight"
+        - "Flight"
       summary: "Add a new flight"
       description: ""
       operationId: "addFlight"
@@ -1169,10 +1145,9 @@ paths:
         - bearerAuth: []
     get:
       tags: 
-      - "Flight"
+        - "Flight"
       summary: "Get all flights"
       description: ""
-      operationId: ""
       responses:
         "200":
           description: "OK"
@@ -1194,20 +1169,20 @@ paths:
           description: "Internal Server Error"
       security:
         - bearerAuth: []
-  /flight/{id}:
+  /flights/{id}:
     get:
       tags:
-      - "Flight"
+        - "Flight"
       summary: "Get a flight details"
       description: ""
       operationId: "findAFlightsByTags"
       parameters:
-      - name: "id"
-        in: "path"
-        description: "Flight id"
-        schema:
-          type: "string"
-        required: true
+        - name: "id"
+          in: "path"
+          description: "Flight id"
+          schema:
+            type: "string"
+          required: true
       responses:
         "200":
           description: "OK"
@@ -1229,17 +1204,17 @@ paths:
         - bearerAuth: []
     patch:
       tags:
-      - "Flight"
+        - "Flight"
       summary: "Update an existing flight"
       description: ""
       operationId: "updateFlight"
       parameters:
-      - in: "path"
-        name: "id"
-        description: "Flight id"
-        schema:
-          type: "string"
-        required: true
+        - in: "path"
+          name: "id"
+          description: "Flight id"
+          schema:
+            type: "string"
+          required: true
       requestBody:
         description: "Flight object that needs to be updated"
         required: true
@@ -1277,19 +1252,19 @@ paths:
         - bearerAuth: []
     delete:
       tags:
-      - "Flight"
+        - "Flight"
       summary: "Deletes a flight"
       description: ""
       operationId: "deleteFlight"
       parameters:
-      - name: "id"
-        in: "path"
-        description: "Flight id to delete"
-        required: true
-        content:
-          application/json:
-            schema:
-              type: "string"
+        - name: "id"
+          in: "path"
+          description: "Flight id to delete"
+          required: true
+          content:
+            application/json:
+              schema:
+                type: "string"
       responses:
         "204": 
           description: "Flight successfully deleted"
