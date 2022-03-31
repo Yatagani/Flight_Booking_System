@@ -14,29 +14,6 @@ servers:
       base_path:
         default: "api/v1"
 
-paths:
-  /health:
-    get:
-      tags:
-        - Health
-      summary: Get server status
-      responses:
-        200:
-          description: Server OK.
-          content:
-            application/json:
-              schema:
-                properties:
-                  appName:
-                    type: string
-                    example: "Flight Booking System Guide"
-                  version:
-                    type: string
-                    example: "1.0.0"
-                  status:
-                    type: string
-                    example: "OK"
-
 components:
   securitySchemes:
     bearerAuth:
@@ -63,7 +40,98 @@ components:
               description: A more specific human-readable error message together with some details
             - type: array
               description: An array with issues from multiple fields (e.g. input validation)
-
+    User:
+      type: "object"
+      required:
+      - "firstName"
+      - "lastName"
+      - "email"
+      - "password"
+      properties:
+        email:
+          type: "string"
+          format: "email"
+        password:
+          type: "string"
+          format: "password"
+        firstName:
+          type: "string"
+        lastName:
+          type: "string"
+    Airplane:
+      type: "object"
+      properties:
+        _id:
+          type: "string"
+        name:
+          type: "string"
+        seats:
+          type: "array"
+          items: 
+            type: "object"
+            properties: 
+              _id: 
+                type: string
+              seatName: 
+                type: "string"
+              price:
+                type: "integer"
+    Airport:
+      type: "object"
+      properties:
+        _id:
+          type: "string"
+        name:
+          type: "string"
+        address:
+          type: "object"
+          properties: 
+            _id:
+              type: "string"
+            country: 
+              type: "string"
+            city:
+              type: "string"
+            street: 
+              type: "string"
+            zipCode:
+              type: "string"
+    Flight:
+      type: "object"
+      properties:
+        _id:
+          type: "string"
+        departureTime:
+          type: "string"
+        arrivalTime:
+          type: "string"
+        flyingFrom:
+          type: "string"
+        flyingTo:
+          type: "string"
+        airplaneId:
+          type: "string"
+        defaultPrice:
+          type: "integer"
+    Booking:
+      type: "object"
+      properties:
+        _id: 
+          type: "string"
+        departureTime:
+          type: "string"
+        arrivalTime:
+          type: "string"
+        flyingFrom:
+          type: "string"
+        flyingTo:
+          type: "string"
+        airplaneName:
+          type: "string"
+        price:
+          type: "number"
+        seat: 
+          type: "string"
   responses:
     400:
       description: Bad Request
@@ -129,20 +197,6 @@ components:
             code: ckgjkxvgl000431pp4xlpew2g
             name: Internal Server Error
             message: Operation cannot be completed due to a problem
-  parameters:
-    skip:
-      name: skip
-      in: query
-      description: Number of records to skip (for pagination)
-      schema:
-        type: string
-    limit:
-      name: limit
-      in: query
-      description: Page size (for pagination)
-      schema:
-        type: string
-
   examples:
     UserNotFound:
       value:
@@ -151,3 +205,1078 @@ components:
         message: The requested item was not found
         details: The requested user does not exist in our database
       summary: User not found
+
+paths:
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Get server status
+      responses:
+        200:
+          description: Server OK.
+          content:
+            application/json:
+              schema:
+                properties:
+                  appName:
+                    type: string
+                    example: "Flight Booking System Guide"
+                  version:
+                    type: string
+                    example: "1.0.0"
+                  status:
+                    type: string
+                    example: "OK"
+  /auth/register:
+    post:
+      tags:
+        - "Authentication"
+      summary: "Sign up"
+      description: "Adds a new user account and sends a confirmation email"
+      requestBody:
+        description: "Sign up user"
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - "email"
+                - "password"
+                - "firstName"
+                - "lastName"
+                - "redirectUrl"
+              properties:
+                email:
+                  type: "string"
+                  format: "email"
+                password:
+                  type: "string"
+                  format: "password"
+                firstName:
+                  type: "string"
+                lastName:
+                  type: "string"
+                redirectUrl:
+                  type: "string"
+                  format: "uri"
+      responses:
+        "204": 
+          description: "User created successfully"
+        "400":
+          $ref: "#/components/responses/400"
+        "422":
+          description: "Unprocessable entity"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                emailExists:
+                  value:
+                    code: ckgjkxvgl000431pp4xlpew2g
+                    name: Unprocessable Entity
+                    message: Your request was understood but could not be completed due to semantic errors
+                    details: An account with the given email already exists
+                    summary: Email exists
+        "500":
+          $ref: "#/components/responses/500"
+  /auth/resend-confirmation-email:
+    post:
+      tags:
+        - "Authentication"
+      summary: "Resend confirmation email"
+      description: "Resends a confirmation email to the given email address"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - "email"
+                - "redirectUrl"
+              properties:
+                email:
+                  type: "string"
+                  format: "email"
+                redirecUrl:
+                  type: "string"
+                  format: "uri"
+      responses:
+        "204": 
+          description: "Email sent successfully"
+        "404":
+          description: "Not Found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                emailExists:
+                  value:
+                    code: ckgjkxvgl000431pp4xlpew2g
+                    name: Not Found
+                    message: The requested item was not found
+                    details: The requested user does not exist, or the account is already confirmed
+                    summary: User not found or account confirmed
+        "500":
+          $ref: "#/components/responses/500"
+  /auth/login:
+    post:
+      tags:
+        - "Authentication"
+      summary: "Log in"
+      description: "Authenticate with email and password"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - "email"
+                - "password"
+              properties:
+                email:
+                  type: "string"
+                  format: "email"
+                password:
+                  type: "string"
+                  format: "password"
+      responses:
+        "200": 
+          description: "User authenticated successfully"
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: "#/components/schemas/User"
+                properties:
+                  token:
+                    type: string
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          description: Not Authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                userNotFound:
+                  value:
+                    code: ckgjkxvgl000431pp4xlpew2g
+                    name: Not Authenticated
+                    message: Missing authentication or invalid credentials
+                    details: The requested user does not exist in our database
+                  summary: User not found
+                invalidPassword:
+                  value:
+                    code: ckgjkxvgl000431pp4xlpew2g
+                    name: Not Authenticated
+                    message: Missing authentication or invalid credentials
+                    details: The provided password is incorrect
+                  summary: Invalid password
+                notConfirmed:
+                  value:
+                    code: ckgjkxvgl000431pp4xlpew2g
+                    name: Not Authenticated
+                    message: Missing authentication or invalid credentials
+                    details: Your account is not confirmed
+                  summary: Account not confirmed
+        "500":
+          $ref: "#/components/responses/500"
+  /auth/confirmation:
+    put:
+      tags:
+        - "Authentication"
+      summary: "Confirm account"
+      description: "Sets user confirmation level to 'confirmed'"
+      parameters:
+        - name: "token"
+          in: "query"
+          description: "User confiramation token"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "204": 
+          description: "Account confirmed successfully"
+        "400":
+          $ref: "#/components/responses/400"
+        "404":
+          description: "Not Found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                emailExists:
+                  value:
+                    code: ckgjkxvgl000431pp4xlpew2g
+                    name: Not Found
+                    message: The requested item was not found
+                    details: The requested user does not exist, or the account is already confirmed
+                    summary: User not found or account confirmed
+        "500":
+          $ref: "#/components/responses/500"
+  /auth/request-new-password:
+    post:
+      tags: 
+        - "Authentication"
+      summary: "Request new password"
+      description: "Sends an email with the reset password instructions"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - "email"
+                - "redirectUrl"
+              properties:
+                email:
+                  type: "string"
+                  format: "email"
+                redirecUrl:
+                  type: "string"
+                  format: "uri"
+      responses:
+        "204": 
+          description: "Email sent successfully"
+        "400":
+          $ref: "#/components/responses/400"
+        "404":
+          description: "Not Found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                userNotFound:
+                  $ref: "#/components/examples/UserNotFound"
+        "500":
+          $ref: "#/components/responses/500"
+  /auth/password:
+    put:
+      tags: 
+        - "Authentication"
+      summary: "Reset password"
+      description: "Reset the user password"
+      requestBody:
+        required: true
+        content:
+          application/json:  
+            schema:
+              type: "object"
+              required:
+                - "token"
+                - "password"
+              properties:
+                token:
+                  type: "string"
+                password:
+                  type: "string"
+      responses:
+        "204": 
+          description: "Password updated successfully"
+        "400":
+          $ref: "#/components/responses/400"
+        "404":
+          description: "Not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                userNotFound:
+                  $ref: "#/components/examples/UserNotFound"
+        "500":
+          $ref: "#/components/responses/500"
+  /auth/two-factor-auth/initialization:
+    put:
+      security:
+        - bearerAuth: []
+      tags:
+        -  "Authentication"
+      summary: "Initialize two-factor authentication"
+      description: "Generates a QR code and returns it to the client."
+      responses:
+        "200": 
+          description: "QR code generated successfully"
+          content:
+            application/json:
+              schema:
+                description: "Base64 representation of the QR code"
+                type: string
+                format: base64
+
+        "401":
+          $ref: "#/components/responses/401"
+        "404":
+          description: "Not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                userNotFound:
+                  $ref: "#/components/examples/UserNotFound"
+        "500":
+          $ref: "#/components/responses/500"
+  /auth/two-factor-auth/activation:
+    put:
+      security:
+        - bearerAuth: []
+      tags:
+        -  "Authentication"
+      summary: "Activate two-factor authentication"
+      description: "Receives a token from the user and validates it. If the token is valid, the two-factor authentication becomes active."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - "token"
+              properties:
+                token:
+                  description: Token generated from a third party app (e.g. Google Authenticator)
+                  type: string
+
+              
+      responses:
+        "204": 
+          description: "Two-factor-authentication activated successfully"
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "404":
+          description: "Not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                userNotFound:
+                  $ref: "#/components/examples/UserNotFound"
+        "422":
+          description: Unprocessable Entity
+          content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/Error"
+                examples:
+                  noTwoFactorAuth:
+                    value:
+                      code: ckgjkxvgl000431pp4xlpew2g
+                      name: Unprocessable Entity
+                      message: Your request was understood but could not be completed due to semantic errors
+                      details: Two-factor authentication is not enabled for your account
+                    summary: No two-factor-auth enabled
+                  invalidToken:
+                    value:
+                      code: ckgjkxvgl000431pp4xlpew2g
+                      name: Unprocessable Entity
+                      message: Your request was understood but could not be completed due to semantic errors
+                      details: The provided token is not valid
+                    summary: Invalid token
+        "500":
+          $ref: "#/components/responses/500"
+  /auth/two-factor-auth/verification:
+    head:
+      security:
+        - bearerAuth: []
+      tags:
+        -  "Authentication"
+      summary: "verify two-factor authentication"
+      description: "Receives a token from the user and validates it."
+      parameters:
+        - in: "query"
+          name: "token"
+          description: "Token generated from a third party app (e.g. Google Authenticator)"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "204": 
+          description: "Token is valid"
+        "400":
+          description: "Bad request"
+        "401":
+          description: "Not Authenticated"
+        "404":
+          description: "Not found"
+        "422":
+          description: "Unprocessable Entity"
+        "500":
+          description: "Internal Server Error"
+  /users:
+    get:
+      tags:
+        - "User"
+      summary: "Get all users"
+      description: "Admin can get list of all users"
+      parameters: []
+      responses:
+        "200":
+          description: "successful operation"
+      security:
+        - bearerAuth: []
+  /users/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: "string"
+    get:
+      tags:
+        - "User"
+      summary: "Get my profile"
+      description: "Get my profile details"
+      responses:
+        "200":
+          description: "successful operation"
+      security:
+        - bearerAuth: []
+    put:
+      tags:
+        - "User"
+      summary: "Update my profile"
+      description: "Update my profile details"
+      responses:
+        "200":
+          description: "successful operation"
+      security:
+        - bearerAuth: [] 
+  /booking:
+    post:
+      tags:
+        - "Booking"
+      summary: "Book a flight"
+      operationId: "bookFlight"
+      requestBody:
+        description: "Flight that needs to be booked by an individual"
+        required: true
+        content:
+          application/json:
+            schema: 
+              type: "object"
+              properties:
+                flightScheduleId:
+                  type: "string"
+                userId:
+                  type: "string"
+                seat:
+                  type: "string"
+      responses:
+        "201":
+          $ref: "#/components/schemas/Booking"
+        "401":
+            $ref: "#/components/responses/401"
+        "400":
+          $ref: "#/components/responses/400"
+        "500":
+          $ref: "#/components/responses/500"
+      security:
+        - bearerAuth: []
+    get:
+      tags:
+        - "Booking"
+      summary: "Get all flights"
+      description: ""
+      operationId: "getAllFlight"
+      parameters: []
+      responses:
+        "200":
+          description: "List of bookings displayed"
+          content:
+            application/json:
+              schema: 
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/Booking"
+        "401":
+          description: "Not authenticated"
+        "400":
+          description: "You requests contain invalid or missing data"
+        "500":
+          description: "Internal server error"
+      security:
+        - bearerAuth: []
+  /booking/{id}:
+    delete:
+      tags:
+        - "Booking"
+      summary: "Cancel booking"
+      description: ""
+      operationId: "cancelBooking"
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "Booking is canceled"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "Booking cancled"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+        "400":
+          description: "Invalid ID supplied"
+        "404":
+          description: "Booking not found"
+      security:
+        - bearerAuth: []
+  /airplanes:
+    post:
+      tags:
+        - "Airplane"
+      summary: "Add a new Airplane"
+      description: ""
+      operationId: "addAirplane"
+      requestBody:
+        description: "New airplane added."
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                name:
+                  type: "string"
+                seats:
+                  type: "array"
+                  items: 
+                    type: "object"
+                    properties: 
+                      id: 
+                        type: "string"
+                      price:
+                        type: "integer"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Airplane"
+        "400":
+          description: "Bad request. Your request contains invalid or missing data"
+        "401": 
+          description: "Not authenticated"
+        "403": 
+          description: "Not authorized"
+        "500":
+          description: "Internal Server Error"
+      security:
+        - bearerAuth: []
+    get:
+      tags: 
+        - "Airplane"
+      summary: "Get all airplanes"
+      description: ""
+      operationId: ""
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/Airplane"
+        "400":
+          description: "Bad request. Your request contains invalid or missing data"
+        "401": 
+          description: "Not authenticated"
+        "403": 
+          description: "Not authorized"
+        "404": 
+          description: "Not found"
+        "500":
+          description: "Internal Server Error"
+      security:
+        - bearerAuth: []
+  /airplanes/{id}:
+    get:
+      tags:
+        - "Airplane"
+      summary: "Get an airplane details"
+      description: ""
+      operationId: "findAirplanesByTags"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "Airplane id"
+          schema:
+            type: "string"
+          required: true
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Airplane"
+        "400":
+          description: "Bad request. Your request contains invalid or missing data"
+        "401": 
+          description: "Not authenticated"
+        "403": 
+          description: "Not authorized"
+        "404": 
+          description: "Not found"
+        "500":
+          description: "Internal Server Error"
+      security:
+        - bearerAuth: []
+    patch:
+      tags:
+        - "Airplane"
+      summary: "Update an existing airplanes"
+      description: ""
+      operationId: "updateAirplanes"
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "Airplane id"
+          schema:
+            type: "string"
+          required: true
+      requestBody:
+        description: "Airplane object that needs to be updated"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                name:
+                  type: "string"
+                seats:
+                  type: "array"
+                  items: 
+                    type: "object"
+                    properties: 
+                      id: 
+                        type: "string"
+                      price:
+                        type: "integer"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Airplane"
+        "400":
+          description: "Bad request. Your request contains invalid or missing data"
+        "401": 
+          description: "Not authenticated"
+        "403": 
+          description: "Not authorized"
+        "404": 
+          description: "Not found"
+        "500":
+          description: "Internal Server Error"
+      security:
+        - bearerAuth: []
+    delete:
+      tags:
+        - "Airplane"
+      summary: "Deletes an airplane"
+      description: ""
+      operationId: "deleteAirplanes"
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "Airplane id to delete"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "204": 
+          description: "Airplane successfully deleted"
+        "400":
+          description: "Invalid ID supplied"
+        "401": 
+          description: "Not authenticated"
+        "403": 
+          description: "Not authorized"
+        "404":
+          description: "Airplane not found"
+        "500":
+          description: "Internal Server Error"
+      security:
+        - bearerAuth: []
+  /airports:
+    post:
+      tags:
+        - "Airport"
+      summary: "Add a new airport"
+      description: ""
+      operationId: "addAirport"
+      requestBody:
+        description: "New airport added."
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                name:
+                  type: "string"
+                address:
+                  type: "object"
+                  properties: 
+                    country: 
+                      type: "string"
+                    city:
+                      type: "string"
+                    street: 
+                      type: "string"
+                    zipCode:
+                      type: "string"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Airport"
+        "400":
+          description: "Bad request. Your request contains invalid or missing data"
+        "401": 
+          description: "Not authenticated"
+        "403": 
+          description: "Not authorized"
+        "500":
+          description: "Internal Server Error"
+      security:
+        - bearerAuth: []
+    get:
+      tags: 
+        - "Airport"
+      summary: "Get all airports"
+      description: ""
+      responses:
+        "200":
+          description: "successfull operation"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/Airport"
+        "400":
+          description: "Bad request. Your request contains invalid or missing data"
+        "401": 
+          description: "Not authenticated"
+        "403": 
+          description: "Not authorized"
+        "404": 
+          description: "Not found"
+        "500":
+          description: "Internal Server Error"
+      security:
+        - bearerAuth: []
+  /airports/{id}:
+    get:
+      tags:
+        - "Airport"
+      summary: "Get an airport details"
+      description: ""
+      operationId: "findAirportsByTags"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "Airport id"
+          schema:
+            type: "string"
+          required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Airport"
+        "400":
+          description: "Bad request. Your request contains invalid or missing data"
+        "401": 
+          description: "Not authenticated"
+        "403": 
+          description: "Not authorized"
+        "404": 
+          description: "Not found"
+        "500":
+          description: "Internal Server Error"
+      security:
+        - bearerAuth: []
+    patch:
+      tags:
+        - "Airport"
+      summary: "Update an existing airport"
+      description: ""
+      operationId: "updateAirport"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "Airport id"
+          schema:
+            type: "string"
+          required: true
+      requestBody:
+        description: "Airport object that needs to be updated"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                name:
+                  type: "string"
+                address:
+                  type: "object"
+                  properties: 
+                    country: 
+                      type: "string"
+                    city:
+                      type: "string"
+                    street: 
+                      type: "string"
+                    zipCode:
+                      type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Airport"
+        "400":
+          description: "Bad request. Your request contains invalid or missing data"
+        "401": 
+          description: "Not authenticated"
+        "403": 
+          description: "Not authorized"
+        "404": 
+          description: "Not found"
+        "500":
+          description: "Internal Server Error"
+      security:
+        - bearerAuth: []
+    delete:
+      tags:
+        - "Airport"
+      summary: "Deletes an airport"
+      description: ""
+      operationId: "deleteAirport"
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "Airport id to delete"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "204": 
+          description: "Airport successfully deleted"
+        "400":
+          description: "Invalid ID supplied"
+        "401": 
+          description: "Not authenticated"
+        "403": 
+          description: "Not authorized"
+        "404":
+          description: "Airport not found"
+      security:
+        - bearerAuth: []
+  /flights:
+    post:
+      tags:
+        - "Flight"
+      summary: "Add a new flight"
+      description: ""
+      operationId: "addFlight"
+      requestBody:
+        description: "New flight added."
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                departureTime:
+                  type: "string"
+                arrivalTime:
+                  type: "string"
+                flyingFrom:
+                  type: "string"
+                flyingTo:
+                  type: "string"
+                airplaneId:
+                  type: "string"
+                defaultPrice:
+                  type: "integer"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Flight"
+        "400":
+          description: "Bad request. Your request contains invalid or missing data"
+        "401": 
+          description: "Not authenticated"
+        "403": 
+          description: "Not authorized"
+        "500":
+          description: "Internal Server Error"
+      security:
+        - bearerAuth: []
+    get:
+      tags: 
+        - "Flight"
+      summary: "Get all flights"
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/Flight"
+        "400":
+          description: "Bad request. Your request contains invalid or missing data"
+        "401": 
+          description: "Not authenticated"
+        "403": 
+          description: "Not authorized"
+        "404":
+          description: "Not found"
+        "500":
+          description: "Internal Server Error"
+      security:
+        - bearerAuth: []
+  /flights/{id}:
+    get:
+      tags:
+        - "Flight"
+      summary: "Get a flight details"
+      description: ""
+      operationId: "findAFlightsByTags"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "Flight id"
+          schema:
+            type: "string"
+          required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Flight"
+        "400":
+          description: "Bad request. Your request contains invalid or missing data"
+        "401": 
+          description: "Not authenticated"
+        "403": 
+          description: "Not authorized"
+        "404":
+          description: "Not found"
+        "500":
+          description: "Internal Server Error"
+      security:
+        - bearerAuth: []
+    patch:
+      tags:
+        - "Flight"
+      summary: "Update an existing flight"
+      description: ""
+      operationId: "updateFlight"
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "Flight id"
+          schema:
+            type: "string"
+          required: true
+      requestBody:
+        description: "Flight object that needs to be updated"
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                departureTime:
+                  type: "string"
+                arrivalTime:
+                  type: "string"
+                flyingFrom:
+                  type: "string"
+                flyingTo:
+                  type: "string"
+                airplaneId:
+                  type: "string"
+                defaultPrice:
+                  type: "integer"
+      responses:
+        "200":
+          description: "OK"
+        "400":
+          description: "Bad request. Your request contains invalid or missing data"
+        "401": 
+          description: "Not authenticated"
+        "403": 
+          description: "Not authorized"
+        "404":
+          description: "Not found"
+        "500":
+          description: "Internal Server Error"
+      security:
+        - bearerAuth: []
+    delete:
+      tags:
+        - "Flight"
+      summary: "Deletes a flight"
+      description: ""
+      operationId: "deleteFlight"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "Flight id to delete"
+          required: true
+          content:
+            application/json:
+              schema:
+                type: "string"
+      responses:
+        "204": 
+          description: "Flight successfully deleted"
+        "400":
+          description: "Invalid ID supplied"
+        "401": 
+          description: "Not authenticated"
+        "403": 
+          description: "Not authorized"
+        "404":
+          description: "Flight not found"
+        "500":
+          description: "Internal server error"
+      security:
+        - bearerAuth: []
