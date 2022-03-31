@@ -470,11 +470,11 @@ paths:
                     summary: User not found or account confirmed
         "500":
           $ref: "#/components/responses/500"
-  /auth/requestNewPassword:
+  /auth/request-new-password:
     post:
       tags: 
       - "Authentication"
-      summary: "Reset new password"
+      summary: "Request new password"
       description: "Sends an email with the reset password instructions"
       requestBody:
         required: true
@@ -637,7 +637,7 @@ paths:
           description: "Unprocessable Entity"
         "500":
           description: "Internal Server Error"
-  /user/all:
+  /users:
     get:
       tags:
       - "User"
@@ -649,7 +649,7 @@ paths:
           description: "successful operation"
       security:
       - bearerAuth: []
-  /user/{id}:
+  /users/{id}:
     parameters:
     - in: path
       name: id

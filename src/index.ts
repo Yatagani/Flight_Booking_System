@@ -1,11 +1,9 @@
-/* eslint-disable import/extensions */
-/* eslint-disable import/no-unresolved */
 import express from 'express';
 import Path from 'path';
 import YAML from 'yamljs';
 import SwaggerUI from 'swagger-ui-express';
 import routes from './app/routes';
-import User from './app/modules/authentication/user';
+import User from './app/modules/authentication/user.model';
 import './app/config/db';
 
 const app = express();
@@ -23,10 +21,6 @@ app.use(
   SwaggerUI.serve,
   SwaggerUI.setup(jsonDocsFile),
 );
-
-app.get('/test', async (request, response) => {
-  response.send('Hello here');
-});
 
 app.post('/users', async (request, response) => {
   const user = new User(request.body);
