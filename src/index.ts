@@ -4,6 +4,7 @@ import YAML from 'yamljs';
 import SwaggerUI from 'swagger-ui-express';
 import routes from './app/routes';
 import './app/config/db';
+import bookingRoutes from './routes/booking';
 
 const app = express();
 const port = process.env.PORT;
@@ -20,6 +21,8 @@ app.use(
   SwaggerUI.serve,
   SwaggerUI.setup(jsonDocsFile),
 );
+
+app.use(bookingRoutes);
 
 app.listen(port, () => {
   console.log(`Server is up on port ${port}`);
