@@ -3,12 +3,16 @@ import Path from 'path';
 import YAML from 'yamljs';
 import SwaggerUI from 'swagger-ui-express';
 import Passport from 'passport';
+import jwtAuth from './app/config/authentication';
 
 import routes from './app/routes';
 import './app/config/db';
 
 const app = express();
 const port = process.env.PORT;
+
+// Service initializations
+jwtAuth();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

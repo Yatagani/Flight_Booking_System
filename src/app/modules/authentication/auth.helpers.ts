@@ -28,3 +28,24 @@ export const sendConfirmationEmail = async ({ user, redirectUrl }) => {
     html,
   });
 };
+
+export const sendEmailWithResetPasswordLink = async ({ user, redirectUrl }) => {
+  const emailContent = await Ejs.renderFile(
+    Path.resolve(__dirname, '../../../templates/mail/reset_password_instructions.ejs'),
+    {
+      user: user.firstName,
+      resetPasswordUrl: `${redirectUrl}?token=${user.confirmationToken}`,
+    },
+  );
+  const html = await InlineCss(emailContent, {
+    url: ' ',
+    applyStyleTags: true,
+  });
+
+  await sendEmail({
+    to: user.email,
+    from: 'kostandin.dervishaj@gmail.com',
+    subject: 'Reset Password Instructions',
+    html,
+  });
+};

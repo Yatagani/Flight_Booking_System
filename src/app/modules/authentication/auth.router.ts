@@ -10,21 +10,25 @@ router.route(`${BASE_ROUTE}/register`).post(
   controller.registerUser,
 );
 
-// router.route(`${BASE_ROUTE}/resend-confirmation-email`).post(
-//   controller.resendConfirmationEmail,
-// );
+router.route(`${BASE_ROUTE}/resend-confirmation-email`).post(
+  controller.resendConfirmationEmail,
+);
 
-// router.route(`${BASE_ROUTE}/login`).post(
-//   controller.logIn,
-// );
+router.route(`${BASE_ROUTE}/confirmation`).put(
+  controller.confirmAccount,
+);
 
-// router.route(`${BASE_ROUTE}/request-new-password`).post(
-//   controller.requestNewPassword,
-// );
+router.route(`${BASE_ROUTE}/login`).post(
+  controller.logIn,
+);
 
-// router.route(`${BASE_ROUTE}/password`).put(
-//   controller.resetPassword,
-// );
+router.route(`${BASE_ROUTE}/request-new-password`).post(
+  controller.requestNewPassword,
+);
+
+router.route(`${BASE_ROUTE}/password`).put(
+  controller.resetPassword,
+);
 
 // router.route(`${BASE_ROUTE}/two-factor-auth/initialization`).put(
 //   Passport.authenticate('jwt', { session: false }),
