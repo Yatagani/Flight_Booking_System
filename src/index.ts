@@ -2,14 +2,17 @@ import express from 'express';
 import Path from 'path';
 import YAML from 'yamljs';
 import SwaggerUI from 'swagger-ui-express';
+import Passport from 'passport';
+
 import routes from './app/routes';
-import User from './app/modules/authentication/user.model';
 import './app/config/db';
 
 const app = express();
 const port = process.env.PORT;
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(Passport.initialize());
 app.use('/api/v1', routes);
 
 // Setup docs
@@ -21,16 +24,6 @@ app.use(
   SwaggerUI.serve,
   SwaggerUI.setup(jsonDocsFile),
 );
-
-app.post('/users', async (request, response) => {
-  const user = new User(request.body);
-  try {
-    await user.save();
-    response.status(201).send(user);
-  } catch (e) {
-    response.status(400).send(e);
-  }
-});
 
 app.listen(port, () => {
   console.log(`Server is up on port ${port}`);
