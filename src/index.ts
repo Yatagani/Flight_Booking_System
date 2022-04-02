@@ -5,7 +5,7 @@ import SwaggerUI from 'swagger-ui-express';
 import routes from './app/routes';
 import User from './app/modules/authentication/user.model';
 import './app/config/db';
-import bookingRoutes from './routes/booking';
+import bookingRoutes from './app/routes/booking';
 
 const app = express();
 const port = process.env.PORT;

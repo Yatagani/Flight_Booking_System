@@ -132,6 +132,8 @@ components:
           type: "number"
         seat: 
           type: "string"
+        passangerFullname:
+          type: "string"
   responses:
     400:
       description: Bad Request
