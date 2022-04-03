@@ -16,9 +16,9 @@ export const createToken = (user) => Jwt.sign({
   isAdmin: user.isAdmin,
 }, opts.secretOrKey);
 
-export const verify = (payload: any, done) => {
-  if (payload?._id && payload?.isConfirmed && payload?.isAdmin !== undefined) {
-    done(null, payload);
+export const verify = (token: any, done) => {
+  if (token?._id && token?.isConfirmed && token?.isAdmin !== undefined) {
+    done(null, token);
   } else {
     done(null, false);
   }

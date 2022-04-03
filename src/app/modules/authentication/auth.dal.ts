@@ -17,9 +17,9 @@ export const updateUser = async ({ query, content }) => {
    * If you set `new: true`, `findOneAndUpdate()` will
    * give you the object after `update` was applied.
    */
-  const options = { new: true };
+  // const options = { new: true };
 
-  const result = await User.findOneAndUpdate(query, options, content);
+  const result = await User.findOneAndUpdate(query, content);
   return result;
 };
 

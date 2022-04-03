@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { NextFunction, Request, Response } from 'express';
 import * as service from './auth.service';
 
@@ -55,14 +56,36 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
   }
 };
 
-export const initTwoFactorAuthentication = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+export const initTwoFactorAuthentication = async (req, res, next) => {
   try {
-    const result = await service.initTwoFactorAuthentication({ user: req.user });
+    const result = await service.initTwoFactorAuthentication({
+      userId: req.user._id,
+    });
     res.status(200).send(result);
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const completeTwoFactorAuthentication = async (req, res, next) => {
+  try {
+    await service.completeTwoFactorAuthentication({
+      userId: req.user._id,
+      requestBody: req.body,
+    });
+    res.sendStatus(204);
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const verifyTwoFactorAuthToken = async (req, res, next) => {
+  try {
+    await service.verifyTwoFactorAuthToken({
+      userId: req.user._id,
+      requestParams: req.query,
+    });
+    res.sendStatus(200);
   } catch (e) {
     next(e);
   }

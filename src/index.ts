@@ -4,7 +4,7 @@ import YAML from 'yamljs';
 import SwaggerUI from 'swagger-ui-express';
 import Passport from 'passport';
 import jwtAuth from './app/config/authentication';
-import errorHandler from './utils/error_middleware';
+import errorHandler from './app/utils/error_middleware';
 
 import routes from './app/routes';
 import './app/config/db';
@@ -35,7 +35,7 @@ process.on('unhandledRejection', (reason) => {
 });
 
 process.on('uncaughtException', (error) => {
-  errorHandler(error);
+  throw error;
 });
 
 app.listen(port, () => {

@@ -300,7 +300,7 @@ paths:
                 email:
                   type: "string"
                   format: "email"
-                redirecUrl:
+                redirectUrl:
                   type: "string"
                   format: "uri"
       responses:
@@ -440,7 +440,7 @@ paths:
                 email:
                   type: "string"
                   format: "email"
-                redirecUrl:
+                redirectUrl:
                   type: "string"
                   format: "uri"
       responses:

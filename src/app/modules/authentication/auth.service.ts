@@ -6,7 +6,10 @@ import QRCode from 'qrcode';
 import * as validator from './auth.validator';
 import * as dal from './auth.dal';
 import * as helpers from './auth.helpers';
+import * as twoFactorAuth from '../../config/authentication/two_factor_auth';
 import { createToken } from '../../config/authentication/jwt';
+import { UnprocessableEntity, NotFound, NotAuthenticated } from '../../utils/error';
+import errors from '../../constants/errors';
 
 export interface IRequestBody {
     email: string,
@@ -26,7 +29,6 @@ export interface INetworkRequest {
 }
 
 export const signUp = async ({ requestBody }: INetworkRequest) => {
-  // 1. Validate user sign up request
   validator.validateUserSignUpRequest({ input: requestBody });
 
   const userWithTheSameEmail = await dal.findUser({
@@ -36,8 +38,7 @@ export const signUp = async ({ requestBody }: INetworkRequest) => {
   });
 
   if (userWithTheSameEmail) {
-    // Throw Error middleware instead of Error
-    throw new Error('422 - Unprocessable Entity');
+    throw new UnprocessableEntity(errors.DUPLICATE_EMAILS);
   }
 
   const salt = await Bcrypt.genSalt();
@@ -78,8 +79,7 @@ export const resendConfirmationEmail = async ({ requestBody }) => {
   });
 
   if (!updatedUser) {
-    // throw new NotFound(errors.USER_NOT_FOUND_OR_ACCOUNT_CONFIRMED);
-    throw new Error('User not found or account confirmed');
+    throw new NotFound(errors.USER_NOT_FOUND_OR_ACCOUNT_CONFIRMED);
   }
 
   await helpers.sendConfirmationEmail({
@@ -98,17 +98,18 @@ export const confirmAccount = async ({ requestParams }) => {
     confirmationToken: requestParams.token,
   };
   const update = {
-    confirmationToken: Crypto.randomBytes(32).toString('hex'),
     isConfirmed: true,
+    confirmationToken: Crypto.randomBytes(32).toString('hex'),
   };
   const updatedUser = await dal.updateUser({
     query,
     content: update,
   });
 
+  console.log(update);
+
   if (!updatedUser) {
-    // throw new NotFound(errors.USER_NOT_FOUND_OR_ACCOUNT_CONFIRMED);
-    throw new Error('User not found or account created');
+    throw new NotFound(errors.USER_NOT_FOUND_OR_ACCOUNT_CONFIRMED);
   }
 
   return updatedUser;
@@ -119,19 +120,16 @@ export const logIn = async ({ requestBody }) => {
 
   const user = await dal.findUser({ query: { email: requestBody.email.toLowerCase() } });
   if (!user) {
-    // throw new NotAuthenticated(errors.USER_NOT_FOUND);
-    throw new Error('Invalid credentials user not found');
+    throw new NotAuthenticated(errors.USER_NOT_FOUND);
   }
 
   const passwordsMatch = await Bcrypt.compare(requestBody.password, user.password);
   if (!passwordsMatch) {
-    // throw new NotAuthenticated(errors.INVALID_PASSWORD);
-    throw new Error('Invalid credentials password');
+    throw new NotAuthenticated(errors.INVALID_PASSWORD);
   }
 
   if (!user.isConfirmed) {
-    // throw new NotAuthenticated(errors.ACCOUNT_NOT_CONFIRMED);
-    throw new Error('Invalid credentials confirmation');
+    throw new NotAuthenticated(errors.ACCOUNT_NOT_CONFIRMED);
   }
 
   const sessionToken = createToken(user);
@@ -141,7 +139,7 @@ export const logIn = async ({ requestBody }) => {
   };
 
   delete userWithToken.password;
-  // delete userWithToken.twoFactorAuth.secret;
+  delete userWithToken.twoFactorAuth.secret;
 
   return userWithToken;
 };
@@ -158,8 +156,7 @@ export const requestNewPassword = async ({ requestBody }) => {
   });
 
   if (!updatedUser) {
-    // throw new NotFound(errors.USER_NOT_FOUND);
-    throw new Error('User not found');
+    throw new NotFound(errors.USER_NOT_FOUND);
   }
 
   await helpers.sendEmailWithResetPasswordLink({
@@ -181,8 +178,7 @@ export const resetPassword = async ({ requestBody }) => {
   });
 
   if (!updatedUser) {
-    // throw new NotFound(errors.USER_NOT_FOUND);
-    throw new Error('User not found');
+    throw new NotFound(errors.USER_NOT_FOUND);
   }
 };
 
@@ -192,11 +188,11 @@ export const resetPassword = async ({ requestBody }) => {
  * 2. Generate a QRCode from the secret
  */
 
-export const initTwoFactorAuthentication = async ({ user }) => {
-  const query = { _id: user.id };
-  const userExists = dal.findUser({ query });
+export const initTwoFactorAuthentication = async ({ userId }) => {
+  const query = { _id: userId };
+  const user = dal.findUser({ query });
 
-  if (!userExists) {
+  if (!user) {
     throw new Error('User does not exist');
   }
 
@@ -211,6 +207,35 @@ export const initTwoFactorAuthentication = async ({ user }) => {
   return { qr: (await qrCodeBase64), sec: secret };
 };
 
+function checkIfUserAccountExists(user) {
+  if (!user) {
+    throw new NotFound(errors.USER_NOT_FOUND);
+  }
+}
+
+function checkIfTwoFactorAuthIsEnabled(user) {
+  if (!user.twoFactorAuth.secret) {
+    throw new UnprocessableEntity(errors.NO_2FA);
+  }
+}
+
+function checkIfTokenIsValid(user, token) {
+  const tokenIsNotValid = !twoFactorAuth.validateToken(
+    user.twoFactorAuth.secret,
+    token,
+  );
+
+  if (tokenIsNotValid) {
+    throw new UnprocessableEntity(errors.INVALID_2FA_TOKEN);
+  }
+}
+
+function checkIfTwoFactorAuthIsActivated(user) {
+  if (!user.twoFactorAuth.active) {
+    throw new UnprocessableEntity(errors.NO_2FA);
+  }
+}
+
 /**
  * Enabling and Validating 2FA
  * Ensure that Auth app and backend use the same secret
@@ -218,10 +243,31 @@ export const initTwoFactorAuthentication = async ({ user }) => {
  * If equal, enable 2FA and store secret in users data in db
  */
 
-export const enableTwoFactorAuthentication = async () => {
+export const completeTwoFactorAuthentication = async ({ userId, requestBody }) => {
+  validator.validateCompleteTwoFactorAuthRequest({ input: requestBody });
 
+  const { token } = requestBody;
+  const query = { _id: userId };
+  const user = await dal.findUser({ query });
+
+  checkIfUserAccountExists(user);
+  checkIfTwoFactorAuthIsEnabled(user);
+  checkIfTokenIsValid(user, token);
+
+  const update = { 'twoFactorAuth.active': true };
+  await dal.updateUser({
+    query,
+    content: update,
+  });
 };
 
-export const validateToken = async () => {
+export const verifyTwoFactorAuthToken = async ({ userId, requestParams }) => {
+  validator.validateVerifyTwoFactorAuthTokenRequest({ input: requestParams });
 
+  const { token } = requestParams;
+  const user = await dal.findUser({ query: { _id: userId } });
+
+  checkIfUserAccountExists(user);
+  checkIfTwoFactorAuthIsActivated(user);
+  checkIfTokenIsValid(user, token);
 };

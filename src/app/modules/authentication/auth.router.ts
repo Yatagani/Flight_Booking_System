@@ -35,14 +35,14 @@ router.route(`${BASE_ROUTE}/two-factor-auth/initialization`).put(
   controller.initTwoFactorAuthentication,
 );
 
-// router.route(`${BASE_ROUTE}/two-factor-auth/activation`).put(
-//   Passport.authenticate('jwt', { session: false }),
-//   controller.enableTwoFactorAuthentication,
-// );
+router.route(`${BASE_ROUTE}/two-factor-auth/activation`).put(
+  Passport.authenticate('jwt', { session: false }),
+  controller.completeTwoFactorAuthentication,
+);
 
-// router.route(`${BASE_ROUTE}/two-factor-auth/verification`).head(
-//   Passport.authenticate('jwt', { session: false }),
-//   controller.verifyTwoFactorAuthToken,
-// );
+router.route(`${BASE_ROUTE}/two-factor-auth/verification`).head(
+  Passport.authenticate('jwt', { session: false }),
+  controller.verifyTwoFactorAuthToken,
+);
 
 export default router;
