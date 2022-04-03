@@ -6,5 +6,5 @@ export default {
   apiDocsUsername: 'username',
   apiDocsPassword: 'password',
   mailServiceApiKey: process.env.MAIL_SERVICE_API_KEY,
-  mailServiceSender: process.env.MAIL_SERVICE_SENDER,
+  mailServiceSender: 'kostandin.dervishaj@gmail.com',
 };

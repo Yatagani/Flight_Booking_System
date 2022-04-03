@@ -1,11 +1,10 @@
-/* eslint-disable import/prefer-default-export */
 import Sendgrid from '@sendgrid/mail';
 
 import config from '../var';
 
 Sendgrid.setApiKey(config.mailServiceApiKey);
 
-export const sendEmail = (params) => new Promise((resolve, reject) => {
+const sendEmail = (params) => new Promise((resolve, reject) => {
   const body = {
     ...params,
     from: {
@@ -13,10 +12,6 @@ export const sendEmail = (params) => new Promise((resolve, reject) => {
       name: config.appName,
     },
   };
-
-  if (params.attachments) {
-    body.attachments = params.attachments;
-  }
 
   Sendgrid.send(body, false, (error, info) => {
     if (error) {
@@ -26,3 +21,5 @@ export const sendEmail = (params) => new Promise((resolve, reject) => {
     }
   });
 });
+
+export default sendEmail;

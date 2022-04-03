@@ -54,3 +54,16 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
     next(e);
   }
 };
+
+export const initTwoFactorAuthentication = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const result = await service.initTwoFactorAuthentication({ user: req.user });
+    res.status(200).send(result);
+  } catch (e) {
+    next(e);
+  }
+};
