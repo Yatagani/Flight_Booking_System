@@ -1,5 +1,7 @@
 import Joi from 'joi';
 
+import { BadRequest } from '../../utils/error';
+
 export const validateUserSignUpRequest = ({ input }) => {
   const schema = Joi.object().keys({
     email: Joi.string().email().required(),
@@ -11,8 +13,7 @@ export const validateUserSignUpRequest = ({ input }) => {
 
   const result = schema.validate(input);
   if (result.error) {
-    //    throw new BadRequest(result?.error?.details)
-    throw new Error('400 - Bad requests during signUp');
+    throw new BadRequest(result?.error?.details);
   }
   return result;
 };
@@ -26,8 +27,7 @@ export const validateResendConfirmationEmailRequest = ({ input }) => {
   const result = schema.validate(input);
 
   if (result.error) {
-    // throw new BadRequest(result?.error?.details);
-    throw new Error('400 - Bad requests while resending confirmation email');
+    throw new BadRequest(result?.error?.details);
   }
 };
 
@@ -39,8 +39,7 @@ export const validateConfirmAccountRequest = ({ input }) => {
   const result = schema.validate(input);
 
   if (result.error) {
-    // throw new BadRequest(result?.error?.details);
-    throw new Error('400 - Bad requests during account confirmation');
+    throw new BadRequest(result?.error?.details);
   }
 };
 
@@ -53,8 +52,7 @@ export const validateLogInRequest = ({ input }) => {
   const result = schema.validate(input);
 
   if (result.error) {
-    // throw new BadRequest(result?.error?.details);
-    throw new Error('400 - Bad requests during login');
+    throw new BadRequest(result?.error?.details);
   }
 };
 
@@ -67,8 +65,7 @@ export const validateResetPasswordRequest = ({ input }) => {
   const result = schema.validate(input);
 
   if (result.error) {
-    // throw new BadRequest(result?.error?.details);
-    throw new Error('400 - Bad requests during password reset');
+    throw new BadRequest(result?.error?.details);
   }
 };
 
@@ -81,7 +78,30 @@ export const validatePasswordUpdateRequest = ({ input }) => {
   const result = schema.validate(input);
 
   if (result.error) {
-    // throw new BadRequest(result?.error?.details);
-    throw new Error('400 - Bad requests during password update');
+    throw new BadRequest(result?.error?.details);
+  }
+};
+
+export const validateCompleteTwoFactorAuthRequest = ({ input }) => {
+  const schema = Joi.object().keys({
+    token: Joi.string().required(),
+  });
+
+  const result = schema.validate(input);
+
+  if (result.error) {
+    throw new BadRequest(result?.error?.details);
+  }
+};
+
+export const validateVerifyTwoFactorAuthTokenRequest = ({ input }) => {
+  const schema = Joi.object().keys({
+    token: Joi.string().required(),
+  });
+
+  const result = schema.validate(input);
+
+  if (result.error) {
+    throw new BadRequest(result?.error?.details);
   }
 };
