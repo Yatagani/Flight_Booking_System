@@ -17,12 +17,8 @@ export const getSingleAirplane = async ({ id }) => {
   return result;
 }
 
-export const updateAirplane = async ({ id, requestBody }) => {
-  console.log(id, requestBody);
-  
-  const result = await Airplane.updateOne({_id: id}, {$set: requestBody}, {returnOriginal: false});
-  console.log(result);
-  
+export const updateAirplane = async ({ id, requestBody }) => {  
+  const result = await Airplane.updateOne({_id: id}, {$set: requestBody}, {returnOriginal: false});  
   return result;
 }
 

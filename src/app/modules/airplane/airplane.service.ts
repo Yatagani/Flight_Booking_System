@@ -25,7 +25,6 @@ export const updateAirplane = async ({ id, requestBody }) => {
 
   if (response.acknowledged) {
     const airplane = await dal.getSingleAirplane({ id });
-    console.log(airplane);
     
     return airplane;
   }
