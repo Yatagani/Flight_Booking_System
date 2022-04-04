@@ -7,7 +7,7 @@
     "start": "env-cmd -f ./config/dev.env ts-node src/index.ts",
     "dev": "env-cmd -f ./config/dev.env nodemon src/index.ts",
     "lint": "eslint . --ext .ts",
-    "test": "env-cmd -f ./config/test.env jest --watch"
+    "test": "env-cmd -f ./config/test.env jest --runInBand --forceExit"
   },
   "repository": {
     "type": "git",
