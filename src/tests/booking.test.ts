@@ -15,7 +15,7 @@ const bookingOne = {
   seat: 'A1',
 };
 
-beforeEach(async () => {
+beforeAll(async () => {
   await Booking.remove({});
   await new Booking(bookingOne).save();
 });

@@ -828,7 +828,7 @@ paths:
                   items: 
                     type: "object"
                     properties: 
-                      id: 
+                      seatName: 
                         type: "string"
                       price:
                         type: "integer"
@@ -937,7 +937,7 @@ paths:
                   items: 
                     type: "object"
                     properties: 
-                      id: 
+                      seatName: 
                         type: "string"
                       price:
                         type: "integer"
