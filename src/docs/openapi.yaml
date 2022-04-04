@@ -132,6 +132,8 @@ components:
           type: "number"
         seat: 
           type: "string"
+        passangerFullname:
+          type: "string"
   responses:
     400:
       description: Bad Request
@@ -707,7 +709,7 @@ paths:
             schema: 
               type: "object"
               properties:
-                flightScheduleId:
+                flightId:
                   type: "string"
                 userId:
                   type: "string"
@@ -773,6 +775,35 @@ paths:
           description: "Invalid ID supplied"
         "404":
           description: "Booking not found"
+      security:
+        - bearerAuth: []
+    get:
+      tags:
+        - "Booking"
+      summary: "Generate ticket PDF"
+      description: ""
+      operationId: "generateFlightTicket"
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "Booking Id"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "Generate ticket PDF"
+          content:
+            application/pdf:
+              schema: 
+                type: "string"
+                format: binary
+        "401":
+          description: "Not authenticated"
+        "400":
+          description: "You requests contain invalid or missing data"
+        "500":
+          description: "Internal server error"
       security:
         - bearerAuth: []
   /airplanes:

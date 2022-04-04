@@ -1,5 +1,6 @@
 import Util from 'util';
 
+import { getLogger } from '../config/logger';
 import { GeneralError, InternalError } from './error';
 
 /**
@@ -15,14 +16,11 @@ export default (err, req, res, next) => {
   }
 
   if (!(err instanceof GeneralError)) {
-    error = new InternalError(typeof (err) === 'object' ? Util.inspect(err) : err, false);
+    error = new InternalError(typeof (err) === 'object' ? Util.inspect(err) : err);
   }
 
   error.setPath(fullPath);
-  /**
-   * Logging functionality should be added
-   * getLogger().error(error.printForLogging());
-   */
+  getLogger().error(error.printForLogging());
 
   if (res?.headersSent) {
     next(err); // pass error to default express handler
