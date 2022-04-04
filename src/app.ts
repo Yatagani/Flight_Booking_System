@@ -2,13 +2,20 @@ import express from 'express';
 import Path from 'path';
 import YAML from 'yamljs';
 import SwaggerUI from 'swagger-ui-express';
+import Passport from 'passport';
+import jwtAuth from './app/config/authentication';
+import errorHandler from './app/utils/error_middleware';
+
 import routes from './app/routes';
-import User from './app/modules/authentication/user.model';
 import './app/config/db';
 
 const app = express();
+const port = process.env.PORT;
+
+jwtAuth();
 
 app.use(express.json());
+app.use(Passport.initialize());
 app.use('/api/v1', routes);
 
 // Setup docs
@@ -21,14 +28,14 @@ app.use(
   SwaggerUI.setup(jsonDocsFile),
 );
 
-app.post('/users', async (request, response) => {
-  const user = new User(request.body);
-  try {
-    await user.save();
-    response.status(201).send(user);
-  } catch (e) {
-    response.status(400).send(e);
-  }
+app.use(errorHandler);
+
+process.on('unhandledRejection', (reason) => {
+  throw reason;
+});
+
+process.on('uncaughtException', (error) => {
+  throw error;
 });
 
 export default app;
