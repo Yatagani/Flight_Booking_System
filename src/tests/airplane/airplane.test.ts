@@ -4,8 +4,15 @@ import Airplane from '../../app/modules/airplane/airplane.model';
 import routes from '../../app/constants/routes';
 import { airplane1, setUpDatabase } from './db';
 
-beforeAll(() => {
+beforeAll(async () => {
   setUpDatabase();
+  const response = await request(app)
+    .post(`${routes.BASE}/auth/login`)
+    .send({
+      "email": "jataganiklejdi@gmail.com",
+      "password": "Test1234"
+    })
+  console.log(response);
 })
 
 const airplane = {
@@ -27,6 +34,13 @@ const airplane = {
 }
 
 test('Should create a new airplane', async () => {
+  const response1 = await request(app)
+    .post(`${routes.BASE}/auth/login`)
+    .send({
+      "email": "jataganiklejdi@gmail.com",
+      "password": "Test1234"
+    })
+  console.log(response1.body);
   const response = await request(app)
     .post(`${routes.BASE}${routes.AIRPLANE}`)
     .send(airplane)
