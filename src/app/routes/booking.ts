@@ -4,7 +4,7 @@ import Airplane from '../modules/airplane/airplane.model';
 import Airport from '../modules/airport/airport.model';
 import User from '../modules/user/user.model';
 import Booking from '../modules/booking/booking.model';
-import Flight from '../modules/flights/flight.model';
+import Flight from '../modules/flight/flight.model';
 import generatePdf from '../utils/generatePDF';
 // import * as authorization from '../modules/user/user.authorize';
 
