@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 
+import dbTables from '../../constants/db_tables';
+
 const userSchema = new mongoose.Schema({
   firstName: {
     type: String,
@@ -56,6 +58,6 @@ const userSchema = new mongoose.Schema({
   timestamps: true,
 });
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model(dbTables.USER, userSchema);
 
 export default User;

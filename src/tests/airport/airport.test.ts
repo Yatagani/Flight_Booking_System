@@ -1,86 +1,77 @@
+import mongoose from 'mongoose';
 import request from 'supertest';
 import app from '../../app';
-import Airplane from '../../app/modules/airplane/airplane.model';
+import Airport from '../../app/modules/airport/airport.model';
 import routes from '../../app/constants/routes';
-import { airplane1, setUpDatabase } from './db';
+import { airport1, setUpDatabase } from './db';
 
-beforeAll(() => {
+beforeAll(async() => {
   setUpDatabase();
 })
 
-const airplane = {
-  name: 'Test',
-  seats: [
-    {
-      seatName: 'Test1',
-      price: 50
-    },
-    {
-      seatName: 'Test2',
-      price: 40
-    },
-    {
-      seatName: 'Test3',
-      price: 30
-    },
-  ]
-}
-
-test('Should create a new airplane', async () => {
-  const response = await request(app)
-    .post(`${routes.BASE}${routes.AIRPLANE}`)
-    .send(airplane)
+test('Should create a new airport', async () => {
+  await request(app)
+    .post(`${routes.BASE}${routes.AIRPORTS}`)
+    .send({
+        name: 'Test',
+        address: {
+            country: 'Test',
+            city: 'Test',
+            street: 'Test',
+            zipCode: 1000,
+          }
+        })
     .expect(200);
-  
-  expect(response.body.name).toBe(airplane.name);
-  expect(response.body.seats).toHaveLength(airplane.seats.length);
+
+    const airport = await Airport.findOne({name: 'Test'})
+    expect(airport).not.toBe(null);
+    expect(airport.address.country).toBe('Test');
 })
 
-test('Should not create an airplane with the same name', async () => {
+test('Should not create a new airport with an existing name', async () => {
   const response = await request(app)
-    .post(`${routes.BASE}${routes.AIRPLANE}`)
+    .post(`${routes.BASE}${routes.AIRPORTS}`)
     .send({
-      name: 'Airplane1',
-      seats: [
-        {
-          seatName: 'A1',
-          price: '50',
-        }
-      ]
+      name: airport1.name,
+      address: {
+        country: airport1.address.country,
+        city: airport1.address.city,
+        street: airport1.address.street,
+        zipCode: airport1.address.zipCode,
+      }
     })
     .expect(400)
 })
 
-test('Should get all airplanes', async () => {
+test('Should get all airports created', async () => {
   const response = await request(app)
-    .get(`${routes.BASE}${routes.AIRPLANE}`)
-    .expect(200);
-
+    .get(`${routes.BASE}${routes.AIRPORTS}`)
+    .expect(200)
   expect(response.body).toHaveLength(2);
-})
+});
 
-test('Should get an existing airplane', async () => {
+test('Should get a single airport', async () => {
   const response = await request(app)
-    .get(`${routes.BASE}${routes.AIRPLANE}/${airplane1._id}`)
+    .get(`${routes.BASE}${routes.AIRPORTS}/${airport1._id}`)
     .expect(200);
 
-  expect(response.body.name).toBe(airplane1.name);
+  expect(response.body.name).toBe(airport1.name)
 })
 
-test('Should update an existing airplane', async () => {
+test('Should update an existing airport', async () => {
   const response = await request(app)
-    .patch(`${routes.BASE}${routes.AIRPLANE}/${airplane1._id}`)
-    .send({ name: 'Airplane2' })
+    .patch(`${routes.BASE}${routes.AIRPORTS}/${airport1._id}`)
+    .send({ name: 'Airport2' })
     .expect(200);
 
-  expect(response.body.name).toBe('Airplane2')
+  expect(response.body.name).toBe('Airport2')
 })
 
-test('Should delete an existing airplane', async () => {
+test('Should delete an existing airport', async () => {
   const response = await request(app)
-    .delete(`${routes.BASE}${routes.AIRPLANE}/${airplane1._id}`)
+    .delete(`${routes.BASE}${routes.AIRPORTS}/${airport1._id}`)
     .expect(204);
 
-  const deletedAirplane = await Airplane.findById(airplane1._id);
-  expect(deletedAirplane).toBe(null)
+  const deletedAirport = await Airport.findById(airport1._id);
+  expect(deletedAirport).toBe(null)
 })

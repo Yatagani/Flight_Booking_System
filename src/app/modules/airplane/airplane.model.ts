@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import models from '../../constants/models';
 
 const seatSchema = new mongoose.Schema({
   seatName: {
@@ -33,6 +34,6 @@ const airplaneSchema = new mongoose.Schema(
   },
 );
 
-const Airplane = mongoose.model('Airplane', airplaneSchema);
+const Airplane = mongoose.model(models.AIRPLANE_MODEL, airplaneSchema);
 
 export default Airplane;
