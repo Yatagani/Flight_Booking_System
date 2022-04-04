@@ -106,8 +106,6 @@ export const confirmAccount = async ({ requestParams }) => {
     content: update,
   });
 
-  console.log(update);
-
   if (!updatedUser) {
     throw new NotFound(errors.USER_NOT_FOUND_OR_ACCOUNT_CONFIRMED);
   }

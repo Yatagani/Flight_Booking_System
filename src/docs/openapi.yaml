@@ -622,13 +622,20 @@ paths:
       parameters: []
       responses:
         "200":
-          description: "successful operation"
+          description: "Users read successfully."
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "500":
+          $ref: "#/components/responses/500"
       security:
         - bearerAuth: []
   /users/{id}:
     parameters:
       - in: path
         name: id
+        description: User ID
         required: true
         schema:
           type: "string"
@@ -639,19 +646,53 @@ paths:
       description: "Get my profile details"
       responses:
         "200":
-          description: "successful operation"
+          description: "User read successfully"
+        "401":
+          $ref: "#/components/responses/401"
+        "500":
+          $ref: "#/components/responses/500"
       security:
         - bearerAuth: []
-    put:
-      tags:
-        - "User"
-      summary: "Update my profile"
-      description: "Update my profile details"
-      responses:
-        "200":
-          description: "successful operation"
+    patch:
       security:
         - bearerAuth: [] 
+      tags:
+        - "User"
+      summary: "Update profile (Admin only)"
+      description: "Update existing profile details"
+      parameters:
+        - name: id
+          in: path
+          description: User Id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+      responses:
+        "200":
+          description: "User updated successfully"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+          "500":
+            $ref: "#/components/responses/500"
   /booking:
     post:
       tags:

@@ -1,6 +1,6 @@
 //  Data access layer
 
-import User from './user.model';
+import User from '../user/user.model';
 
 export const findUser = async ({ query }) => {
   const result = await User.findOne(query);
