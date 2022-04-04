@@ -12,6 +12,7 @@ const port = process.env.PORT;
 
 app.use(express.json());
 app.use('/api/v1', routes);
+app.use(bookingRoutes);
 
 // Setup docs
 const docsFilePath = Path.resolve(__dirname, './docs/openapi.yaml');
@@ -23,7 +24,6 @@ app.use(
   SwaggerUI.setup(jsonDocsFile),
 );
 
-app.use(bookingRoutes);
 app.post('/users', async (request, response) => {
   const user = new User(request.body);
   try {
@@ -37,3 +37,5 @@ app.post('/users', async (request, response) => {
 app.listen(port, () => {
   console.log(`Server is up on port ${port}`);
 });
+
+export default app;

@@ -4,7 +4,7 @@ import Airport from '../modules/airport/airport.model';
 import User from '../modules/authentication/user.model';
 import Booking from '../modules/booking/booking.model';
 import Flight from '../modules/flights/flight.model';
-import generatePdf from '../utils';
+import generatePdf from '../utils/generatePDF';
 
 const router = express.Router();
 
@@ -41,13 +41,16 @@ router.post('/booking', async (request, response) => {
 });
 
 router.get('/booking', async (request, response) => {
-  const bookingList = await Booking.find({});
+  const limit = parseInt(request.query.limit as string, 10);
+  const skip = parseInt(request.query.skip as string, 10);
+
+  const bookingList = await Booking.find({}).limit(limit).skip(skip);
   const bookingListModified = await Promise.all(
     bookingList.map((bookingItem) => bookingItem.getBookingObject()),
   );
 
   try {
-    response.status(200).send(bookingListModified);
+    response.status(201).send(bookingListModified);
   } catch (e) {
     response.status(500).send();
   }
@@ -58,20 +61,20 @@ router.delete('/booking/:id', async (request, response) => {
     const booking = await Booking.findByIdAndDelete({ _id: request.params.id });
 
     if (!booking) {
-      response.status(400).send();
+      return response.status(400).send();
     }
 
-    response.status(201).send(await booking.getBookingObject());
+    return response.status(201).send(await booking.getBookingObject());
   } catch (e) {
-    response.status(500);
+    return response.status(500);
   }
-
-  response.status(200).send();
 });
 
 router.get('/booking/:id', async (request, response) => {
   try {
     const booking = await Booking.findById({ _id: request.params.id });
+
+    if (!booking) return response.status(400);
     const bookingExpandedFlight = await Flight.findById(booking.flightId)
       .populate('flyingFrom flyingTo', 'name', Airport)
       .populate('airplaneId', 'name seats', Airplane);
@@ -133,9 +136,9 @@ router.get('/booking/:id', async (request, response) => {
 
     response.setHeader('Content-Type', 'application/pdf');
     response.setHeader('Content-disposition', 'attachment; filename=ticket.pdf');
-    response.send(await generatePdf(docDefinition));
+    return response.status(200).send(await generatePdf(docDefinition));
   } catch (e) {
-    response.status(500).send(e);
+    return response.status(500).send(e);
   }
 });
 
