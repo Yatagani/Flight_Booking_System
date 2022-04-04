@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import models from '../../constants/models';
 
 const flightSchema = new mongoose.Schema(
   {
@@ -15,17 +16,17 @@ const flightSchema = new mongoose.Schema(
     flyingFrom: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: 'Airport',
+      ref: models.AIRPORT_MODEL,
     },
     flyingTo: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: 'Airport',
+      ref: models.AIRPORT_MODEL,
     },
     airplaneId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: 'Airplane',
+      ref: models.AIRPLANE_MODEL,
     },
     defaultPrice: {
       type: Number,
@@ -38,6 +39,16 @@ const flightSchema = new mongoose.Schema(
   },
 );
 
-const Flight = mongoose.model('Flight', flightSchema);
+flightSchema.pre('validate', function (next) {
+  if(this.flyingFrom.toString() === this.flyingTo.toString()) {
+    this.invalidate('flyingTo', 'Destination cannot match departure place!', this.flyingTo)
+  }
+  if(this.departureTime >= this.arrivalTime) {
+    this.invalidate('arrivalTime', 'Arrival time should be greater than departureTime!', this.arrivalTime)
+  }
+  next()
+})
+
+const Flight = mongoose.model(models.FLIGHT_MODEL, flightSchema);
 
 export default Flight;
