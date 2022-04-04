@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import Flight from '../flights/flight.model';
 import Airplane from '../airplane/airplane.model';
 import Airport from '../airport/airport.model';
-import User from '../authentication/user.model';
+import User from '../user/user.model';
 
 const bookingSchema = new mongoose.Schema({
   flightId: {

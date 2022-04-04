@@ -1,14 +1,16 @@
 import express from 'express';
+import Passport from 'passport';
 import Airplane from '../modules/airplane/airplane.model';
 import Airport from '../modules/airport/airport.model';
-import User from '../modules/authentication/user.model';
+import User from '../modules/user/user.model';
 import Booking from '../modules/booking/booking.model';
 import Flight from '../modules/flights/flight.model';
 import generatePdf from '../utils/generatePDF';
+// import * as authorization from '../modules/user/user.authorize';
 
 const router = express.Router();
 
-router.post('/booking', async (request, response) => {
+router.post('/booking', Passport.authenticate('jwt', { session: false }), async (request, response) => {
   // Check if the plan capacity is reached
   const planeSeats = await Flight.findById(request.body.flightId)
     .populate('airplaneId', 'name seats', Airplane).exec()
@@ -40,7 +42,9 @@ router.post('/booking', async (request, response) => {
   }
 });
 
-router.get('/booking', async (request, response) => {
+router.get('/booking', Passport.authenticate('jwt', { session: false }), async (request, response) => {
+  // authorization.authorizeRequest(request.user);
+
   const limit = parseInt(request.query.limit as string, 10);
   const skip = parseInt(request.query.skip as string, 10);
 
@@ -56,7 +60,7 @@ router.get('/booking', async (request, response) => {
   }
 });
 
-router.delete('/booking/:id', async (request, response) => {
+router.delete('/booking/:id', Passport.authenticate('jwt', { session: false }), async (request, response) => {
   try {
     const booking = await Booking.findByIdAndDelete({ _id: request.params.id });
 
@@ -70,7 +74,7 @@ router.delete('/booking/:id', async (request, response) => {
   }
 });
 
-router.get('/booking/:id', async (request, response) => {
+router.get('/booking/:id', Passport.authenticate('jwt', { session: false }), async (request, response) => {
   try {
     const booking = await Booking.findById({ _id: request.params.id });
 
