@@ -5,9 +5,15 @@ import User from '../user/user.model';
 import Airplane from '../airplane/airplane.model';
 import Airport from '../airport/airport.model';
 import { authorizeRequest } from '../user/user.authorize';
-import { UnprocessableEntity } from '../../utils/error';
+import { BadRequest, UnprocessableEntity } from '../../utils/error';
 
 export const createBooking = async ({ requestBody }) => {
+  const providedKeys = Object.keys(requestBody);
+  const allowedKeys = ['flightId', 'userId', 'seat'];
+  const isValidInput = providedKeys.every((key) => allowedKeys.includes(key));
+
+  if (!isValidInput) throw new BadRequest('Invalid field');
+
   const planeSeats = await Flight.findById(requestBody.flightId)
     .populate('airplaneId', 'name seats', Airplane).exec()
     .then((res) => res.airplaneId.seats);
