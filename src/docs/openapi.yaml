@@ -132,6 +132,8 @@ components:
           type: "number"
         seat: 
           type: "string"
+        passangerFullname:
+          type: "string"
   responses:
     400:
       description: Bad Request
@@ -300,7 +302,7 @@ paths:
                 email:
                   type: "string"
                   format: "email"
-                redirecUrl:
+                redirectUrl:
                   type: "string"
                   format: "uri"
       responses:
@@ -440,7 +442,7 @@ paths:
                 email:
                   type: "string"
                   format: "email"
-                redirecUrl:
+                redirectUrl:
                   type: "string"
                   format: "uri"
       responses:
@@ -622,13 +624,20 @@ paths:
       parameters: []
       responses:
         "200":
-          description: "successful operation"
+          description: "Users read successfully."
+        "400":
+          $ref: "#/components/responses/400"
+        "401":
+          $ref: "#/components/responses/401"
+        "500":
+          $ref: "#/components/responses/500"
       security:
         - bearerAuth: []
   /users/{id}:
     parameters:
       - in: path
         name: id
+        description: User ID
         required: true
         schema:
           type: "string"
@@ -639,19 +648,53 @@ paths:
       description: "Get my profile details"
       responses:
         "200":
-          description: "successful operation"
+          description: "User read successfully"
+        "401":
+          $ref: "#/components/responses/401"
+        "500":
+          $ref: "#/components/responses/500"
       security:
         - bearerAuth: []
-    put:
-      tags:
-        - "User"
-      summary: "Update my profile"
-      description: "Update my profile details"
-      responses:
-        "200":
-          description: "successful operation"
+    patch:
       security:
         - bearerAuth: [] 
+      tags:
+        - "User"
+      summary: "Update profile (Admin only)"
+      description: "Update existing profile details"
+      parameters:
+        - name: id
+          in: path
+          description: User Id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+      responses:
+        "200":
+          description: "User updated successfully"
+        "401":
+          $ref: "#/components/responses/401"
+        "403":
+          $ref: "#/components/responses/403"
+        "404":
+          $ref: "#/components/responses/404"
+        "422":
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+          "500":
+            $ref: "#/components/responses/500"
   /booking:
     post:
       tags:
@@ -666,7 +709,7 @@ paths:
             schema: 
               type: "object"
               properties:
-                flightScheduleId:
+                flightId:
                   type: "string"
                 userId:
                   type: "string"
@@ -734,6 +777,35 @@ paths:
           description: "Booking not found"
       security:
         - bearerAuth: []
+    get:
+      tags:
+        - "Booking"
+      summary: "Generate ticket PDF"
+      description: ""
+      operationId: "generateFlightTicket"
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "Booking Id"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "Generate ticket PDF"
+          content:
+            application/pdf:
+              schema: 
+                type: "string"
+                format: binary
+        "401":
+          description: "Not authenticated"
+        "400":
+          description: "You requests contain invalid or missing data"
+        "500":
+          description: "Internal server error"
+      security:
+        - bearerAuth: []
   /airplanes:
     post:
       tags:
@@ -756,7 +828,7 @@ paths:
                   items: 
                     type: "object"
                     properties: 
-                      id: 
+                      seatName: 
                         type: "string"
                       price:
                         type: "integer"
@@ -865,7 +937,7 @@ paths:
                   items: 
                     type: "object"
                     properties: 
-                      id: 
+                      seatName: 
                         type: "string"
                       price:
                         type: "integer"
