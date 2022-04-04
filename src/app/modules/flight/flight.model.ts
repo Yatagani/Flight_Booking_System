@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import models from '../../constants/models';
 
 const flightSchema = new mongoose.Schema(
   {
@@ -15,17 +16,17 @@ const flightSchema = new mongoose.Schema(
     flyingFrom: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: 'Airport',
+      ref: models.AIRPORT,
     },
     flyingTo: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: 'Airport',
+      ref: models.AIRPORT,
     },
     airplaneId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: 'Airplane',
+      ref: models.AIRPLANE,
     },
     defaultPrice: {
       type: Number,
@@ -38,6 +39,6 @@ const flightSchema = new mongoose.Schema(
   },
 );
 
-const Flight = mongoose.model('Flight', flightSchema);
+const Flight = mongoose.model(models.FLIGHT, flightSchema);
 
 export default Flight;

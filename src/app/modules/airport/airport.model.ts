@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import models from '../../constants/models';
 
 const addressSchema = new mongoose.Schema({
   country: {
@@ -41,6 +42,6 @@ const airportSchema = new mongoose.Schema(
   },
 );
 
-const Airport = mongoose.model('Airport', airportSchema);
+const Airport = mongoose.model(models.AIRPORT, airportSchema);
 
 export default Airport;
