@@ -2,7 +2,7 @@ import request from 'supertest';
 import app from '../../app';
 import Airplane from '../../app/modules/airplane/airplane.model';
 import routes from '../../app/constants/routes';
-import { airplane1, setUpDatabase } from '../airport/db';
+import { airplane1, setUpDatabase } from './db';
 
 beforeAll(() => {
   setUpDatabase();

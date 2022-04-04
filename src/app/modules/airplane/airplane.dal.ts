@@ -1,4 +1,3 @@
-import { ObjectId } from 'mongodb';
 import Airplane from './airplane.model';
 import { AirplaneType } from './airplane.types';
 
@@ -23,6 +22,6 @@ export const updateAirplane = async ({ id, requestBody }) => {
 }
 
 export const deleteAirplane = async ({ id }) => {
-  const result = await Airplane.deleteOne({ id });
+  const result = await Airplane.deleteOne({ _id: id });
   return result;
 }
