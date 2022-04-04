@@ -5,20 +5,20 @@ export const airplane1 = new Airplane({
   seats: [
     {
       seatName: 'A1',
-      price: 50
+      price: 50,
     },
     {
       seatName: 'A2',
-      price: 40
+      price: 40,
     },
     {
       seatName: 'A3',
-      price: 30
+      price: 30,
     },
-  ]
-})
+  ],
+});
 
 export const setUpDatabase = async () => {
   await Airplane.deleteMany();
   await airplane1.save();
-}
+};

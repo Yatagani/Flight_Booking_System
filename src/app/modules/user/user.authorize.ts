@@ -7,5 +7,4 @@ export const authorizeRequest = ({ user }) => {
     console.log('start');
     throw new NotAuthorized(errors.USER_NOT_FOUND);
   }
-  console.log('stop');
 };

@@ -8,11 +8,12 @@ import errorHandler from './app/utils/error_middleware';
 
 import routes from './app/routes';
 import './app/config/db';
+import { initLoggerService } from './app/config/logger';
 
 const app = express();
-const port = process.env.PORT;
 
 jwtAuth();
+initLoggerService();
 
 app.use(express.json());
 app.use(Passport.initialize());
