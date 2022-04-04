@@ -42,6 +42,6 @@ const airportSchema = new mongoose.Schema(
   },
 );
 
-const Airport = mongoose.model(models.AIRPORT_MODEL, airportSchema);
+const Airport = mongoose.model(models.AIRPORT, airportSchema);
 
 export default Airport;

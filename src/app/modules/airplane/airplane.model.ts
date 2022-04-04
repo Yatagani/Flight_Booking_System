@@ -34,6 +34,6 @@ const airplaneSchema = new mongoose.Schema(
   },
 );
 
-const Airplane = mongoose.model(models.AIRPLANE_MODEL, airplaneSchema);
+const Airplane = mongoose.model(models.AIRPLANE, airplaneSchema);
 
 export default Airplane;

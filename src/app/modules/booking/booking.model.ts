@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import Flight from '../flights/flight.model';
+import Flight from '../flight/flight.model';
 import Airplane from '../airplane/airplane.model';
 import Airport from '../airport/airport.model';
 import User from '../user/user.model';

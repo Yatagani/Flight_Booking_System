@@ -16,17 +16,17 @@ const flightSchema = new mongoose.Schema(
     flyingFrom: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: models.AIRPORT_MODEL,
+      ref: models.AIRPORT,
     },
     flyingTo: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: models.AIRPORT_MODEL,
+      ref: models.AIRPORT,
     },
     airplaneId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: models.AIRPLANE_MODEL,
+      ref: models.AIRPLANE,
     },
     defaultPrice: {
       type: Number,
@@ -49,6 +49,6 @@ flightSchema.pre('validate', function (next) {
   next()
 })
 
-const Flight = mongoose.model(models.FLIGHT_MODEL, flightSchema);
+const Flight = mongoose.model(models.FLIGHT, flightSchema);
 
 export default Flight;
