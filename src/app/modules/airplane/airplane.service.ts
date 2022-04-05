@@ -22,7 +22,7 @@ export const createAirplane = async ({ requestBody, user }) => {
 
   const existingAirplane = await Airplane.findOne({ name: requestBody.name });
   if (existingAirplane) {
-    throw new UnprocessableEntity(`The name '${requestBody.name}' already exists in the database.`);
+    throw new UnprocessableEntity(`An airplane with the name '${requestBody.name}' already exists in the database.`);
   }
 
   const data = new Airplane(requestBody);
@@ -44,13 +44,15 @@ export const getAirplaneDetails = async ({ id, user }) => {
 export const updateAirplane = async ({ id, requestBody, user }) => {
   authorizeRequest({user});
 
-  const response = await dal.updateAirplane({ id, requestBody });
-
-  if (response.acknowledged) {
-    const airplane = await dal.getSingleAirplane({ id });
-    return airplane;
+  if (Object.keys(requestBody).length === 0) {
+    throw new BadRequest('Request body does not contain data.')
   }
-  throw new NotFound('')
+
+  const airplane = await dal.updateAirplane({ id, requestBody });
+  if (!airplane) {
+    throw new NotFound('');
+  }
+  return airplane;
 }
 
 export const deleteAirplane = async ({ id, user }) => {

@@ -81,7 +81,6 @@ test('Should get an existing airplane', async () => {
     .get(`${routes.BASE}${routes.AIRPLANE}/${airplane1.id}`)
     .set('Authorization', `bearer ${token}`)
     .expect(200);
-  console.log(response.body);
 })
 
 test('Should update an existing airplane', async () => {
@@ -106,5 +105,5 @@ test('Should delete an existing airplane', async () => {
 
 afterAll(async() => {
   await clearDB();
-  
+
 })

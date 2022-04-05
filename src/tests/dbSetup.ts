@@ -101,6 +101,7 @@ export const setUpDatabase = async () => {
   await airplane1.save();
   await airport1.save();
   await airport2.save();
+  await flight.save();
   await userAdmin.save();
   await userNotAdmin.save();
 }

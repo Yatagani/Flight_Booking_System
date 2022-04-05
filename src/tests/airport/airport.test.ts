@@ -18,7 +18,6 @@ beforeAll(async () => {
       email: "user.admin@test.com",
       password: "Test1234"
     })
-    console.log(loggedInUser.body);
     
   token = loggedInUser.body.token;
 })
@@ -60,7 +59,7 @@ test('Should not create a new airport with an existing name', async () => {
         zipCode: airport1.address.zipCode,
       }
     })
-    .expect(500)
+    .expect(422)
 })
 
 test('Should get all airports created', async () => {
