@@ -17,10 +17,10 @@ export const getSingleAirplane = async ({ id }) => {
 };
 
 export const updateAirplane = async ({ id, requestBody }) => {
-  const result = await Airplane.updateOne(
+  const result = await Airplane.findByIdAndUpdate(
     { _id: id },
     { $set: requestBody },
-    { returnOriginal: false },
+    { new: true },
   );
   return result;
 };

@@ -17,7 +17,7 @@ export const getSingleFlight = async ({ id }) => {
 }
 
 export const updateFlight = async ({ id, requestBody }) => {
-  const result = await Flight.updateOne({_id: id}, {$set: requestBody}, {returnOriginal: false});
+  const result = await Flight.findByIdAndUpdate({_id: id}, {$set: requestBody}, { new: true });
   return result;
 }
 

@@ -843,13 +843,15 @@ paths:
               schema:
                 $ref: "#/components/schemas/Airplane"
         "400":
-          description: "Bad request. Your request contains invalid or missing data"
+          $ref: "#/components/responses/400"
         "401": 
-          description: "Not authenticated"
+          $ref: "#/components/responses/401"
         "403": 
-          description: "Not authorized"
+          $ref: "#/components/responses/403"
+        "422": 
+          $ref: "#/components/responses/422"
         "500":
-          description: "Internal Server Error"
+          $ref: "#/components/responses/500"
       security:
         - bearerAuth: []
     get:
@@ -868,15 +870,15 @@ paths:
                 items:
                   $ref: "#/components/schemas/Airplane"
         "400":
-          description: "Bad request. Your request contains invalid or missing data"
+          $ref: "#/components/responses/400"
         "401": 
-          description: "Not authenticated"
+          $ref: "#/components/responses/401"
         "403": 
-          description: "Not authorized"
+          $ref: "#/components/responses/403"
         "404": 
-          description: "Not found"
+          $ref: "#/components/responses/404"
         "500":
-          description: "Internal Server Error"
+          $ref: "#/components/responses/500"
       security:
         - bearerAuth: []
   /airplanes/{id}:
@@ -901,15 +903,15 @@ paths:
               schema:
                 $ref: "#/components/schemas/Airplane"
         "400":
-          description: "Bad request. Your request contains invalid or missing data"
+          $ref: "#/components/responses/400"
         "401": 
-          description: "Not authenticated"
+          $ref: "#/components/responses/401"
         "403": 
-          description: "Not authorized"
+          $ref: "#/components/responses/403"
         "404": 
-          description: "Not found"
+          $ref: "#/components/responses/404"
         "500":
-          description: "Internal Server Error"
+          $ref: "#/components/responses/500"
       security:
         - bearerAuth: []
     patch:
@@ -952,15 +954,15 @@ paths:
               schema:
                 $ref: "#/components/schemas/Airplane"
         "400":
-          description: "Bad request. Your request contains invalid or missing data"
+          $ref: "#/components/responses/400"
         "401": 
-          description: "Not authenticated"
+          $ref: "#/components/responses/401"
         "403": 
-          description: "Not authorized"
+          $ref: "#/components/responses/403"
         "404": 
-          description: "Not found"
+          $ref: "#/components/responses/404"
         "500":
-          description: "Internal Server Error"
+          $ref: "#/components/responses/500"
       security:
         - bearerAuth: []
     delete:
@@ -980,15 +982,15 @@ paths:
         "204": 
           description: "Airplane successfully deleted"
         "400":
-          description: "Invalid ID supplied"
+          $ref: "#/components/responses/400"
         "401": 
-          description: "Not authenticated"
+          $ref: "#/components/responses/401"
         "403": 
-          description: "Not authorized"
+          $ref: "#/components/responses/403"
         "404":
-          description: "Airplane not found"
+          $ref: "#/components/responses/404"
         "500":
-          description: "Internal Server Error"
+          $ref: "#/components/responses/500"
       security:
         - bearerAuth: []
   /airports:
@@ -1027,13 +1029,15 @@ paths:
               schema:
                 $ref: "#/components/schemas/Airport"
         "400":
-          description: "Bad request. Your request contains invalid or missing data"
+          $ref: "#/components/responses/400"
         "401": 
-          description: "Not authenticated"
+          $ref: "#/components/responses/401"
         "403": 
-          description: "Not authorized"
+          $ref: "#/components/responses/403"
+        "422":
+          $ref: "#/components/responses/422"
         "500":
-          description: "Internal Server Error"
+          $ref: "#/components/responses/500"
       security:
         - bearerAuth: []
     get:
@@ -1051,15 +1055,15 @@ paths:
                 items:
                   $ref: "#/components/schemas/Airport"
         "400":
-          description: "Bad request. Your request contains invalid or missing data"
+          $ref: "#/components/responses/400"
         "401": 
-          description: "Not authenticated"
+          $ref: "#/components/responses/401"
         "403": 
-          description: "Not authorized"
+          $ref: "#/components/responses/403"
         "404": 
-          description: "Not found"
+          $ref: "#/components/responses/404"
         "500":
-          description: "Internal Server Error"
+          $ref: "#/components/responses/500"
       security:
         - bearerAuth: []
   /airports/{id}:
@@ -1084,15 +1088,15 @@ paths:
               schema:
                 $ref: "#/components/schemas/Airport"
         "400":
-          description: "Bad request. Your request contains invalid or missing data"
+          $ref: "#/components/responses/400"
         "401": 
-          description: "Not authenticated"
+          $ref: "#/components/responses/401"
         "403": 
-          description: "Not authorized"
+          $ref: "#/components/responses/403"
         "404": 
-          description: "Not found"
+          $ref: "#/components/responses/404"
         "500":
-          description: "Internal Server Error"
+          $ref: "#/components/responses/500"
       security:
         - bearerAuth: []
     patch:
@@ -1137,15 +1141,15 @@ paths:
               schema:
                 $ref: "#/components/schemas/Airport"
         "400":
-          description: "Bad request. Your request contains invalid or missing data"
+          $ref: "#/components/responses/400"
         "401": 
-          description: "Not authenticated"
+          $ref: "#/components/responses/401"
         "403": 
-          description: "Not authorized"
+          $ref: "#/components/responses/403"
         "404": 
-          description: "Not found"
+          $ref: "#/components/responses/404"
         "500":
-          description: "Internal Server Error"
+          $ref: "#/components/responses/500"
       security:
         - bearerAuth: []
     delete:
@@ -1165,13 +1169,15 @@ paths:
         "204": 
           description: "Airport successfully deleted"
         "400":
-          description: "Invalid ID supplied"
+          $ref: "#/components/responses/400"
         "401": 
-          description: "Not authenticated"
+          $ref: "#/components/responses/401"
         "403": 
-          description: "Not authorized"
+          $ref: "#/components/responses/403"
         "404":
-          description: "Airport not found"
+          $ref: "#/components/responses/404"
+        "500":
+          $ref: "#/components/responses/500"
       security:
         - bearerAuth: []
   /flights:
@@ -1209,13 +1215,15 @@ paths:
               schema:
                 $ref: "#/components/schemas/Flight"
         "400":
-          description: "Bad request. Your request contains invalid or missing data"
+          $ref: "#/components/responses/400"
         "401": 
-          description: "Not authenticated"
+          $ref: "#/components/responses/401"
         "403": 
-          description: "Not authorized"
+          $ref: "#/components/responses/403"
+        "422":
+          $ref: "#/components/responses/422"
         "500":
-          description: "Internal Server Error"
+          $ref: "#/components/responses/500"
       security:
         - bearerAuth: []
     get:
@@ -1233,15 +1241,15 @@ paths:
                 items:
                   $ref: "#/components/schemas/Flight"
         "400":
-          description: "Bad request. Your request contains invalid or missing data"
+          $ref: "#/components/responses/400"
         "401": 
-          description: "Not authenticated"
+          $ref: "#/components/responses/401"
         "403": 
-          description: "Not authorized"
+          $ref: "#/components/responses/403"
         "404":
-          description: "Not found"
+          $ref: "#/components/responses/404"
         "500":
-          description: "Internal Server Error"
+          $ref: "#/components/responses/500"
       security:
         - bearerAuth: []
   /flights/{id}:
@@ -1266,15 +1274,15 @@ paths:
               schema:
                 $ref: "#/components/schemas/Flight"
         "400":
-          description: "Bad request. Your request contains invalid or missing data"
+          $ref: "#/components/responses/400"
         "401": 
-          description: "Not authenticated"
+          $ref: "#/components/responses/401"
         "403": 
-          description: "Not authorized"
+          $ref: "#/components/responses/403"
         "404":
-          description: "Not found"
+          $ref: "#/components/responses/404"
         "500":
-          description: "Internal Server Error"
+          $ref: "#/components/responses/500"
       security:
         - bearerAuth: []
     patch:
@@ -1314,15 +1322,15 @@ paths:
         "200":
           description: "OK"
         "400":
-          description: "Bad request. Your request contains invalid or missing data"
+          $ref: "#/components/responses/400"
         "401": 
-          description: "Not authenticated"
+          $ref: "#/components/responses/401"
         "403": 
-          description: "Not authorized"
+          $ref: "#/components/responses/403"
         "404":
-          description: "Not found"
+          $ref: "#/components/responses/404"
         "500":
-          description: "Internal Server Error"
+          $ref: "#/components/responses/500"
       security:
         - bearerAuth: []
     delete:
@@ -1344,14 +1352,14 @@ paths:
         "204": 
           description: "Flight successfully deleted"
         "400":
-          description: "Invalid ID supplied"
+          $ref: "#/components/responses/400"
         "401": 
-          description: "Not authenticated"
+          $ref: "#/components/responses/401"
         "403": 
-          description: "Not authorized"
+          $ref: "#/components/responses/403"
         "404":
-          description: "Flight not found"
+          $ref: "#/components/responses/404"
         "500":
-          description: "Internal server error"
+          $ref: "#/components/responses/500"
       security:
         - bearerAuth: []

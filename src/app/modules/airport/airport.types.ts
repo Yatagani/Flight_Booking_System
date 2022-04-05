@@ -12,12 +12,12 @@ export type AirportType = {
   }
 }
 
-export type AirportRequestBodyType = {
-  name: string,
+export const AirportRequestBody = {
+  name: '',
   address: {
-    country: string,
-    city: string,
-    street: string,
-    zipCode: number,
+    country: '',
+    city: '',
+    street: '',
+    zipCode: '',
   }
 }

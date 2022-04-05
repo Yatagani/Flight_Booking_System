@@ -1,9 +1,10 @@
-import app from './app';
+import { initExpressApp } from './app';
 
 const port = process.env.PORT;
 
-app.listen(port, () => {
-  console.log(`Server is up on port ${port}`);
-});
-
-export default app;
+(async () => {
+  const app = await initExpressApp();
+  app.listen(port, () => {
+    console.log(`Server is up on port ${port}`);
+  });
+})();

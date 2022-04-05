@@ -51,6 +51,8 @@ export const initLoggerService = () => {
       },
     ],
   });
+  
 };
+
 
 export const getLogger = () => logger;

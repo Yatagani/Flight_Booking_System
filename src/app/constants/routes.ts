@@ -5,4 +5,5 @@ export default {
   AIRPORTS: '/airports',
   FLIGHT: '/flights',
   BOOKING: '/booking',
+  AUTH: '/auth',
 };
