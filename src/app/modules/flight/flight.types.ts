@@ -9,3 +9,12 @@ export type FlightType = {
   airplaneId: string,
   defaultPrice: number,
 }
+
+export const FlightRequestBody = {
+  departureTime: '',
+  arrivalTime: '',
+  flyingFrom: '',
+  flyingTo: '',
+  airplaneId: '',
+  defaultPrice: '',
+}
