@@ -5,17 +5,18 @@ import { BadRequest, NotFound, UnprocessableEntity } from '../../utils/error';
 import { AirplaneRequestBody } from './airplane.types';
 
 export const getAirplanes = async ({ user }) => {
-  authorizeRequest({user});
+  authorizeRequest({ user });
   const airplanes = await dal.listAirplanes();
   return airplanes;
-}
+};
 
 export const createAirplane = async ({ requestBody, user }) => {
-  authorizeRequest({user});
-  
+  authorizeRequest({ user });
+
   const requestBodyKeys = Object.keys(AirplaneRequestBody);
-  const hasAllKeys = requestBodyKeys.every(item => requestBody.hasOwnProperty(item));
-  
+  // eslint-disable-next-line no-prototype-builtins
+  const hasAllKeys = requestBodyKeys.every((item) => requestBody.hasOwnProperty(item));
+
   if (!hasAllKeys) {
     throw new BadRequest('Property missing!');
   }
@@ -28,10 +29,10 @@ export const createAirplane = async ({ requestBody, user }) => {
   const data = new Airplane(requestBody);
   const createdAirplane = await dal.createAirplane({ data });
   return createdAirplane;
-}
+};
 
 export const getAirplaneDetails = async ({ id, user }) => {
-  authorizeRequest({user});
+  authorizeRequest({ user });
   const airplane = await dal.getSingleAirplane({ id });
 
   if (!airplane) {
@@ -39,13 +40,13 @@ export const getAirplaneDetails = async ({ id, user }) => {
   }
 
   return airplane;
-}
+};
 
 export const updateAirplane = async ({ id, requestBody, user }) => {
-  authorizeRequest({user});
+  authorizeRequest({ user });
 
   if (Object.keys(requestBody).length === 0) {
-    throw new BadRequest('Request body does not contain data.')
+    throw new BadRequest('Request body does not contain data.');
   }
 
   const airplane = await dal.updateAirplane({ id, requestBody });
@@ -53,14 +54,13 @@ export const updateAirplane = async ({ id, requestBody, user }) => {
     throw new NotFound('');
   }
   return airplane;
-}
+};
 
 export const deleteAirplane = async ({ id, user }) => {
-  authorizeRequest({user});
+  authorizeRequest({ user });
   const airplane = await dal.getSingleAirplane({ id });
   if (!airplane) {
     return new NotFound('');
   }
   await dal.deleteAirplane({ id });
-  return;
-}
+};

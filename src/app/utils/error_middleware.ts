@@ -20,6 +20,7 @@ export default (err, req, res, next) => {
   }
 
   error.setPath(fullPath);
+
   getLogger().error(error.printForLogging());
 
   if (res?.headersSent) {

@@ -10,7 +10,7 @@ import errorHandler from './app/utils/error_middleware';
 import routes from './app/routes';
 import initDB from './app/config/db';
 
-
+// eslint-disable-next-line import/prefer-default-export
 export const initExpressApp = async () => {
   const app = express();
   await initDB();
@@ -33,7 +33,7 @@ export const initExpressApp = async () => {
 
   app.use(errorHandler);
   return app;
-}
+};
 
 process.on('unhandledRejection', (reason) => {
   throw reason;

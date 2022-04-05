@@ -15,30 +15,30 @@ beforeAll(async () => {
   const loggedInUser = await request(app)
     .post(`${routes.BASE}/auth/login`)
     .send({
-      email: "user.admin@test.com",
-      password: "Test1234"
-    })
-    
+      email: 'user.admin@test.com',
+      password: 'Test1234',
+    });
+
   token = loggedInUser.body.token;
-})
+});
 
 const airplane = {
   name: 'Test',
   seats: [
     {
       seatName: 'Test1',
-      price: 50
+      price: 50,
     },
     {
       seatName: 'Test2',
-      price: 40
+      price: 40,
     },
     {
       seatName: 'Test3',
-      price: 30
+      price: 30,
     },
-  ]
-}
+  ],
+};
 
 test('Should create a new airplane', async () => {
   const response = await request(app)
@@ -46,10 +46,10 @@ test('Should create a new airplane', async () => {
     .set('Authorization', `bearer ${token}`)
     .send(airplane)
     .expect(200);
-  
+
   expect(response.body.name).toBe(airplane.name);
   expect(response.body.seats).toHaveLength(airplane.seats.length);
-})
+});
 
 test('Should not create an airplane with the same name', async () => {
   const response = await request(app)
@@ -61,11 +61,11 @@ test('Should not create an airplane with the same name', async () => {
         {
           seatName: 'A1',
           price: '50',
-        }
-      ]
+        },
+      ],
     })
-    .expect(422)
-})
+    .expect(422);
+});
 
 test('Should get all airplanes', async () => {
   const response = await request(app)
@@ -74,14 +74,14 @@ test('Should get all airplanes', async () => {
     .expect(200);
 
   expect(response.body).toHaveLength(2);
-})
+});
 
 test('Should get an existing airplane', async () => {
   const response = await request(app)
     .get(`${routes.BASE}${routes.AIRPLANE}/${airplane1.id}`)
     .set('Authorization', `bearer ${token}`)
     .expect(200);
-})
+});
 
 test('Should update an existing airplane', async () => {
   const response = await request(app)
@@ -90,8 +90,8 @@ test('Should update an existing airplane', async () => {
     .send({ name: 'Airplane2' })
     .expect(200);
 
-  expect(response.body.name).toBe('Airplane2')
-})
+  expect(response.body.name).toBe('Airplane2');
+});
 
 test('Should delete an existing airplane', async () => {
   const response = await request(app)
@@ -100,10 +100,9 @@ test('Should delete an existing airplane', async () => {
     .expect(204);
 
   const deletedAirplane = await Airplane.findById(airplane1._id);
-  expect(deletedAirplane).toBe(null)
-})
+  expect(deletedAirplane).toBe(null);
+});
 
-afterAll(async() => {
+afterAll(async () => {
   await clearDB();
-
-})
+});

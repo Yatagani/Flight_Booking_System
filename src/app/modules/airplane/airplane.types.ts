@@ -15,5 +15,5 @@ export const AirplaneRequestBody = {
   seats: {
     seatName: '',
     price: '',
-  }
-}
+  },
+};
