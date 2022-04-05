@@ -19,6 +19,14 @@ export const airplane1 = new Airplane({
       seatName: 'A3',
       price: 30
     },
+    {
+      seatName: 'A4',
+      price: 20
+    },
+    {
+      seatName: 'A5',
+      price: 10
+    },
   ]
 })
 
@@ -89,6 +97,12 @@ export const flight = new Flight({
   defaultPrice: 1000
 })
 
+export const booking = new Booking({
+  flightId: flight._id,
+  userId: userAdmin._id,
+  seat: 'A1'
+})
+
 export const clearDB = async () => {
   await Airplane.deleteMany({});
   await Airport.deleteMany({});
@@ -102,6 +116,7 @@ export const setUpDatabase = async () => {
   await airport1.save();
   await airport2.save();
   await flight.save();
+  await booking.save();
   await userAdmin.save();
   await userNotAdmin.save();
 }

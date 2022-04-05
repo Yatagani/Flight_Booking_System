@@ -34,6 +34,14 @@ export const createFlight = async ({ requestBody, user }) => {
   if (!airplane) {
     throw new NotFound('The airplane does not exist in the database!')
   }
+
+  if (requestBody.departureTime >= requestBody.arrivalTime) {
+    throw new UnprocessableEntity('Arrival time should be greater than departureTime!');
+  }
+
+  if (requestBody.flyingFrom === requestBody.flyingTo) {
+    throw new UnprocessableEntity('Destination cannot match departure place!');
+  }
   
   const data = new Flight(requestBody);
   const createdFlight = await dal.createFlight({ data });

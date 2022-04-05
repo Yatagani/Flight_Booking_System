@@ -54,7 +54,7 @@ router.get('/booking', Passport.authenticate('jwt', { session: false }), async (
   );
 
   try {
-    response.status(201).send(bookingListModified);
+    response.status(200).send(bookingListModified);
   } catch (e) {
     response.status(500).send();
   }
